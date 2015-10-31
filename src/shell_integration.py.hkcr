@@ -1,0 +1,85 @@
+# Codex
+# Copyright (C) 2015 James Scholes
+# This program is free software, licensed under the terms of the GNU General Public License (version 3 or later).
+# See the file LICENSE.txt for more details.
+import os.path
+import sys
+from winreg import *
+
+import application
+import conversion
+
+class ShellIntegrationError(Exception):
+    pass
+
+READ_PERMISSIONS = KEY_ENUMERATE_SUB_KEYS|KEY_QUERY_VALUE|KEY_READ|KEY_WOW64_64KEY
+WRITE_PERMISSIONS = KEY_CREATE_SUB_KEY|KEY_SET_VALUE|KEY_WRITE|KEY_WOW64_64KEY
+CLSID = 'AllFilesystemObjects'
+SHELL_BRANCH = 'CodexShellIntegration'
+
+if not application.is_frozen:
+    entrypoint = '"{0}" "{1}"'.format(sys.executable, os.path.join(application.application_path, 'codex.pyw'))
+else:
+    entrypoint = '"{0}"'.format(os.path.join(application.application_path, 'codex.exe'))
+
+root_menu = {
+    'id': 'RootMenu',
+    'label': 'Code&x',
+    'commands': [
+        {'id': 'Convert', 'label': _('&Convert'), 'command': '{0} "%1"'.format(entrypoint)},
+        {'id': 'RemoveDRM', 'label': _('&Remove DRM'), 'command': '{0} -r "%1"'.format(entrypoint)},
+        ],
+}
+
+convert_to_menu = {
+    'id': 'ConvertToMenu',
+    'parent': root_menu,
+    'label': _('C&onvert to'),
+    'commands': [{'id': format.name, 'label': format.value, 'command': '{0} -f {1} "%1"'.format(entrypoint, format.name)} for format in conversion.OutputFormat]
+}
+
+menu_tree = (root_menu, convert_to_menu)
+
+def is_integrated():
+    try:
+        codex = OpenKeyEx(HKEY_CLASSES_ROOT, '{0}\\shell\\{1}'.format(CLSID, SHELL_BRANCH), access=READ_PERMISSIONS)
+        codex.Close()
+        return True
+    except (OSError, EnvironmentError, FileNotFoundError): # the documentation doesn't seem very clear (or correct) about which of these will be raised
+        return False
+
+def create_menu(menu):
+    base = r'{clsid}\shell\{shell_branch}'.format(clsid=CLSID, shell_branch=SHELL_BRANCH)
+    commands_base = r'{base}\{menu_id}\shell'.format(base=base, menu_id=menu['id'])
+
+    for command in menu['commands']:
+        command_path = r'{base}\{command_id}'.format(base=commands_base, command_id=command['id'])
+        command_handle = CreateKeyEx(HKEY_CLASSES_ROOT, command_path, access=WRITE_PERMISSIONS)
+        SetValueEx(command_handle, 'MUIVerb', 0, REG_SZ, command['label'])
+        SetValue(command_handle, 'command', REG_SZ, command['command'])
+        command_handle.Close()
+
+    if 'parent' in menu.keys():
+        menu_descriptor = r'{base}\{parent_id}\shell\{menu_id}'.format(base=base, parent_id=menu['parent']['id'], menu_id=menu['id'])
+    else:
+        menu_descriptor = base
+
+    descriptor_handle = CreateKeyEx(HKEY_CLASSES_ROOT, menu_descriptor, access=WRITE_PERMISSIONS)
+    SetValueEx(descriptor_handle, 'MUIVerb', 0, REG_SZ, menu['label'])
+    SetValueEx(descriptor_handle, 'ExtendedSubCommandsKey', 0, REG_SZ, r'{clsid}\shell\{shell_branch}\{menu_id}'.format(clsid=CLSID, shell_branch=SHELL_BRANCH, menu_id=menu['id']))
+    descriptor_handle.Close()
+
+def integrate():
+    for menu in menu_tree:
+        create_menu(menu)
+
+def setup():
+    try:
+        if not is_integrated() or hasattr(application, 'reset_shell_integration'):
+            integrate()
+        else:
+            application.logger.debug('Shell integration already set up.')
+    except PermissionError:
+        raise ShellIntegrationError
+
+    application.logger.debug('Command line entrypoint: {0}'.format(entrypoint))

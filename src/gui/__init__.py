@@ -1,0 +1,167 @@
+# Codex
+# Copyright (C) 2015 James Scholes
+# This program is free software, licensed under the terms of the GNU General Public License (version 3 or later).
+# See the file LICENSE.txt for more details.
+import os.path
+import subprocess
+
+import wx
+import wx.lib.sized_controls as sc
+
+import application
+import calibre
+import conversion
+import models
+import paths
+
+from . import conversion_pipeline
+from . import dialogs
+from .utils import create_button, create_labelled_field, get_output_format_choices
+
+class MainWindow(sc.SizedFrame):
+    def __init__(self, *args, **kwargs):
+        super(MainWindow, self).__init__(None, -1, _(application.title), size=(800, 600), style=wx.DEFAULT_FRAME_STYLE, *args, **kwargs)
+        self.Centre()
+        self.setup_layout()
+
+    def remove_file(self, selected_item):
+        if selected_item != -1:
+            book = self.files_list.GetClientData(selected_item)
+            conversion.conversion_queue.remove(book)
+            self.files_list.Delete(selected_item)
+            try:
+                if self.files_list.GetCount() != 0:
+                    if selected_item == self.files_list.GetCount():
+                        next_item_index = selected_item - 1
+                    elif selected_item == 0:
+                        next_item_index = 0
+                    else:
+                        next_item_index = selected_item
+                    self.files_list.SetSelection(next_item_index)
+            except wx.PyAssertionError:
+                pass
+
+    def setup_layout(self):
+        main_panel = self.GetContentsPane()
+        main_panel.SetSizerType('vertical')
+
+        files_list_label = wx.StaticText(main_panel, label=_('&Files'))
+        self.files_list = wx.ListBox(main_panel, style=wx.LB_NEEDED_SB)
+        self.files_list.SetSizerProps(expand=True, proportion=1)
+        self.files_list.Bind(wx.EVT_KEY_DOWN, self.onFilesListKeyPressed)
+        self.files_list.Bind(wx.EVT_LISTBOX, self.onFilesListSelectionChange)
+
+        files_list_buttons_panel = sc.SizedPanel(main_panel)
+        files_list_buttons_panel.SetSizerType('horizontal')
+
+        add_files_button = create_button(files_list_buttons_panel, _('Add f&iles...'), self.onAddFiles)
+        add_folder_button = create_button(files_list_buttons_panel, _('Add f&older...'), self.onAddFolder)
+        self.remove_file_button = create_button(files_list_buttons_panel, _('&Remove file'), self.onRemoveFile)
+        self.remove_file_button.Hide()
+
+        main_buttons_panel = sc.SizedPanel(main_panel)
+        main_buttons_panel.SetSizerType('horizontal')
+
+        self.output_formats = get_output_format_choices(main_buttons_panel, _('Output &format'))
+
+        convert_button = create_button(main_buttons_panel, _('&Convert'), self.onConvert, wx.ID_CONVERT)
+        remove_drm_button = create_button(main_buttons_panel, _('Remove &DRM'), self.onRemoveDRM, wx.ID_CONVERT)
+        options_button = create_button(main_buttons_panel, _('O&ptions'), self.onOptions, id=wx.ID_PREFERENCES)
+        if not application.is_frozen:
+            calibre_environment_button = create_button(main_buttons_panel, '&Launch Calibre environment', self.onCalibreEnvironment)
+        about_button = create_button(main_buttons_panel, _('&About'), self.onAbout, wx.ID_ABOUT)
+        exit_button = create_button(main_buttons_panel, _('E&xit'), self.onExit, id=wx.ID_EXIT)
+
+    def reset(self):
+        self.files_list.Clear()
+        self.files_list.SetFocus()
+
+    def onFilesListKeyPressed(self, event):
+        if event.GetKeyCode() == wx.WXK_DELETE and self.files_list.GetCount() != 0:
+            self.remove_file(self.files_list.GetSelection())
+        else:
+            event.Skip()
+
+    def onFilesListSelectionChange(self, event):
+        if event.IsSelection():
+            self.remove_file_button.Show()
+        else:
+            event.Skip()
+
+    def onAddFiles(self, event):
+        file_dialog = wx.FileDialog(self, message=_('Please select the file(s) to be added'), defaultDir=application.config['working_directory'], wildcard=_('All supported files|{0}|All files|{1}').format(conversion.input_wildcards, '*.*'), style=wx.FD_OPEN|wx.FD_FILE_MUST_EXIST|wx.FD_MULTIPLE)
+        result = file_dialog.ShowModal()
+
+        if result == wx.ID_OK:
+            selected_paths = file_dialog.GetPaths()
+            conversion_pipeline.add_paths(selected_paths, parent=self)
+            application.config['working_directory'] = os.path.split(file_dialog.GetPath())[0]
+            application.config.write()
+            self.files_list.SetFocus()
+
+    def onAddFolder(self, event):
+        folder_dialog = wx.DirDialog(self, message=_('Please select the folder to be added'), defaultPath=application.config['working_directory'], style=wx.DD_DEFAULT_STYLE|wx.DD_DIR_MUST_EXIST)
+        result = folder_dialog.ShowModal()
+
+        if result == wx.ID_OK:
+            conversion_pipeline.add_paths(paths.walk_directory_tree(folder_dialog.GetPath()), parent=self, from_folder=True)
+            application.config['working_directory'] = os.path.split(folder_dialog.GetPath())[0]
+            application.config.write()
+            self.files_list.SetFocus()
+
+    def onRemoveFile(self, event):
+        if self.files_list.GetCount() != 0:
+            self.remove_file(self.files_list.GetSelection())
+            self.files_list.SetFocus()
+
+    def onRemoveDRM(self, event):
+        conversion.remove_drm_only = True
+        conversion_pipeline.start(parent=self)
+        self.reset()
+
+    def onConvert(self, event):
+        conversion.output_format = self.output_formats.GetClientData(self.output_formats.GetSelection())
+        conversion_pipeline.start(parent=self)
+        self.reset()
+
+    def onOptions(self, event):
+        options_dialog = dialogs.OptionsDialog(self)
+        options_dialog.ShowModal()
+
+    def onCalibreEnvironment(self, event):
+        calibre.setup()
+        subprocess.Popen(['cmd.exe'], cwd=calibre.calibre_path, creationflags=subprocess.CREATE_NEW_CONSOLE)
+
+    def onAbout(self, event):
+        about_dialog = dialogs.AboutDialog(self)
+        about_dialog.ShowModal()
+
+    def onExit(self, event):
+        self.Close()
+
+def setup():
+    if not hasattr(application, 'command_line_args'):
+        application.main_window = MainWindow()
+        application.wx_app.SetTopWindow(application.main_window)
+        application.main_window.Show()
+    else:
+        args = application.command_line_args
+        if not os.path.exists(args.path):
+            wx.MessageBox(_('The specified file or directory does not exist.'), _('Error'), wx.ICON_ERROR, parent=None)
+            return
+        if os.path.isdir(args.path):
+            conversion_pipeline.add_paths(paths.walk_directory_tree(args.path), from_folder=True)
+            if len(conversion.conversion_queue) == 0:
+                wx.MessageBox(_('No supported files were found in the specified directory.'), _('Error'), wx.ICON_ERROR, parent=None)
+                return
+        else:
+            conversion_pipeline.add_paths([args.path])
+
+        if len(conversion.conversion_queue) == 0:
+            return
+
+        conversion.remove_drm_only = args.remove_drm_only
+        if not conversion.remove_drm_only:
+            conversion.output_format = conversion.OutputFormat[args.format].name
+        conversion_pipeline.start()
+        return

@@ -1,0 +1,6 @@
+Conversion dialog opens.
+For each file in the file queue, controller.process_file is called.
+def process_file(path, remove_drm=True, convert=True)
+This function will:
+Construct and execute a call to calibredb command:
+calibredb --library-path <library_path> add --duplicates <path>

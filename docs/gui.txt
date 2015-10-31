@@ -1,0 +1,33 @@
+Main window: Codex - eBook DRM Removal and Conversion
+
+Files list: Stores the list of files to be converted, with the most recently-added at the top.  Should only show filenames, not the full path.  Pressing the Delete key should remove the currently-focussed file.
+Add files... button: Present an Open dialog which allows selecting multiple files, currently only supporting *.azw.  Returns a list of files to be added to the list.
+Add folder... button: Allow the user to select a single folder of files to be added, from which all supported files will be extracted.
+Remove button: Remove the currently-focussed item from the files list, only visible when the file list is non-empty and an item is selected.
+Output format combo-box: Presents the human-readable names of the available output formats, e.g. ePub, plain text, etc. with the file extensions stored behind the scenes.
+Process button: Opens the "Processing..." dialog and processes each file in the listbox, or shows an error message if no files have been added.
+Options button: Opens the Options dialog.
+About button: Opens the About dialog.
+Exit button: Closes the program.
+
+Processing... dialog:
+Informs the user which file is currently being processed, e.g. "Processing file 1 of 5, C:\Path\To\eBook.azw".
+When processing is complete, if the user has the appropriate configuration setting enabled, the dialog should close automatically if no errors occured.
+Otherwise, the title of the dialog should be changed to "Processing complete", and if there were any errors, they should be listed in a read-only edit field and written to a log.
+The "Open file" button should then be made visible and available if only one file was processed.
+Show log buttton: Makes a read-only edit visible showing the output of the running Calibre commands.
+Cancel button: Allows the user to cancel the operation.
+
+Options dialog:
+Configuration should be read from configuration file.
+Interface language combo-box: Allows the user to change the interface language used by codex.  A restart will be required.
+Output directory: A read-only edit storing the current path of the output directory where processed books will be saved.
+Browse... button: Allows the user to select an output directory.
+Open single file after conversion checkbox: Unchecked by default, controls whether the processed file should be opened in the user's default program if only one file has been specified.
+Close program after successful conversion checkbox: Unchecked by default, controls whether Codex should exit after all files have been processed without errors.
+OK button: Saves and writes the configuration and closes the dialog.  Does nothing if no configuration values have been altered.
+Cancel button: Discards any changes made and closes the dialog.
+
+About dialog:
+Shows the version number and other information about the application in read-only edit fields.
+Close button: Close the dialog.

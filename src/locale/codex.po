@@ -1,0 +1,83 @@
+# Translations template for PROJECT.
+# Copyright (C) 2015 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2015.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2015-09-07 22:34+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.0\n"
+
+#: controller.py:11
+msgid "Kindle files"
+msgstr ""
+
+#: controller.py:15
+msgid "ePub"
+msgstr ""
+
+#: controller.py:16
+msgid "Plain text"
+msgstr ""
+
+#: gui.py:32
+msgid "&Files"
+msgstr ""
+
+#: gui.py:36
+msgid "Add f&iles..."
+msgstr ""
+
+#: gui.py:37
+msgid "Add f&older..."
+msgstr ""
+
+#: gui.py:38
+msgid "&Remove file"
+msgstr ""
+
+#: gui.py:41
+msgid "Output &format"
+msgstr ""
+
+#: gui.py:45
+msgid "&Convert"
+msgstr ""
+
+#: gui.py:46
+msgid "O&ptions"
+msgstr ""
+
+#: gui.py:47
+msgid "&About"
+msgstr ""
+
+#: gui.py:48
+msgid "E&xit"
+msgstr ""
+
+#: gui.py:58
+msgid "Please select the file(s) to be added"
+msgstr ""
+
+#: gui.py:58
+msgid "Kindle books (.azw)|*.azw|All files|*.*"
+msgstr ""
+
+#: gui.py:67
+msgid "File {file} has already been added."
+msgstr ""
+
+#: gui.py:68
+msgid "Error"
+msgstr ""
+

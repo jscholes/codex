@@ -1,0 +1,11 @@
+*.exe
+__pycache__/
+*.py[cod]
+*.mo
+*.pot
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+calibre/
+Codex-*

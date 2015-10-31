@@ -1,0 +1,44 @@
+calibredb remove --library-path="..\calibre_library" 1-200
+calibredb add --library-path="..\calibre_library" --duplicates "C:\Users\jscholes\Documents\Calibre Library\MacBride, Stuart\Birthdays for the Dead (134)\Birthdays for the Dead - MacBride, Stuart.azw3"
+Backing up metadata
+Added book ids: 1
+Notifying calibre of the change
+
+r'\nAdded book ids: ([0-9]+)\n'
+re.MULTILINE
+*: 0 or more
++: 1 or more
+?: 0 or 1
+
+['calibredb', 'add', '--library-path', r'..\calibre_library', '--duplicates', r'C:\Users\jscholes\Documents\Calibre Library\MacBride, Stuart\Birthdays for the Dead (134)\Birthdays for the Dead - MacBride, Stuart.azw3']
+
+calibredb export --library-path="..\calibre_library" --all --dont-save-cover --dont-write-opf --dont-update-metadata --template="{authors}/{title}" --to-dir="..\books"
+calibredb list --library-path="..\calibre_library" --for-machine --fields=all
+[
+  {
+    "author_sort": "Talbot, Nicci",
+    "authors": "Nicci Talbot",
+    "cover": "C:\\Users\\jscholes\\Dropbox\\Dev\\codex\\calibre_library\\Nicci Talbot\\Unzipped_ How to give the perfect bl (1)\\cover.jpg",
+    "formats": [
+      "C:\\Users\\jscholes\\Dropbox\\Dev\\codex\\calibre_library\\Nicci Talbot\\Unzipped_ How to give the perfect bl (1)\\Unzipped_ How to give the perfe - Nicci Talbot.azw"
+    ],
+    "id": 1,
+    "identifiers": "mobi-asin:B00AFBE4LU",
+    "isbn": "",
+    "languages": [
+      "eng"
+    ],
+    "last_modified": "2015-09-15T21:32:30+00:00",
+    "pubdate": "2012-11-26T00:00:00+00:00",
+    "publisher": "Octopus",
+    "series_index": 1.0,
+    "size": 3600068,
+    "tags": [],
+    "timestamp": "2015-09-15T21:32:30+00:00",
+    "title": "Unzipped: How to give the perfect blow job",
+    "uuid": "2d37b2ae-646b-4d95-b8b5-f6338156ff1d"
+  }
+]
+
+HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\FileExts
+HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\QRead

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Codex Beta Testing</title>
+</head>
+<body>
+<h1>Codex Beta Testing</h1>
+<p>Thank you for agreeing to help test Codex 2.  This new version includes a fair few new features and generally should be more stable and pleasant to use.  It has, however, been completely rewritten from scratch in a different programming language, so is missing the months of user testing that the old version has enjoyed so far.</p>
+<p>Version 1 has been discontinued.  It will no longer be made available and it is recommended that you uninstall it before using version 2.  The new installer for v2 will remove any old context menu commands to avoid confusion, but will not remove your old configuration data or program files should you wish to return to version 1 for whatever reason.</p>
+<h2>Sending Feedback</h2>
+<p>All issue reports, feature suggestions, etc are welcome.  The best way to send them to me is via direct message on Twitter; my username is <a href="http://twitter.com/JamesScholes">@JamesScholes</a>.  You will be able to DM me regardless of whether or not I'm following you.</p>
+<p>When reporting a problem, please be as specific and detailed as possible about what you were trying to do when the error occurred, what you expected to happen and what actually did.  It would also be extremely helpful if you were to include a Dropbox link or similar to your log file, which can be found at:<br />
+<blockquote>%appdata%\codex2\codex2.log</blockquote></p>
+<h2>New Features and Changes</h2>
+<p>Here are a few of the new features and changes in this version of Codex:<br />
+<ul>
+<li>Multiple file and folder support</li>
+<li>Many more choices of which format to convert your books to</li>
+<li>The option to remove the DRM without eBook conversion: Useful, for instance, with Adobe Digital Editions books which are often already in ePub</li>
+<li>Better shell integration: Your context menu will now contain a Codex submenu, providing options to convert a file to your default output format, remove the DRM only, or choose a format to convert the book to
+<li>Templates for naming your converted files: This is currently rather limited, and will hopefully be improved in the future.  Current tags: $author, $title</li>
+<li>The ability to cancel a running conversion or skip the current file when converting multiple books</li>
+</ul></p>
+<p>There are a number of other, less noteworthy additions and changes which I will let you discover for yourself.</p>
+<h2>Important Notes</h2>
+<p><ul>
+<li>After installation, you must run the program at least once in order to set up your configuration directory as well as the shell and calibre integration.  The installer no longer takes care of this.</li>
+<li>You can set your output settings (directory, default format and filename template) in the Options dialog.</li>
+<li>The new shell integration will not work on versions of Windows prior to Windows 7.</li>
+<li>The Codex submenu will appear in the context menu for all files and folders, rather than just for Kindle books.  This makes it easier to perform batch conversions from Windows Explorer or similar, and means that you can now convert ePub, PDF, etc files straight from the shell.</li>
+<li>The eBook metadata that is used when naming your output files is provided by calibre, which in-turn obtains it directly from your eBook files.  Thus, it may be unreliable or inaccurate.  In future, I intend to integrate Codex with Goodreads or similar to make this better.</li>
+</ul>
+<h2>Changes</h2>
+<h3>Beta 2</h3>
+<ul>
+<li>It should no longer be necessary to run Codex as admin in order for it to be successfully integrated with Windows Explorer</li>
+<li>eBook conversion and DRM removal now work successfully on Windows 10</li>
+<li>Codex will remember your last used directory when adding files across restarts of the application</li>
+<li>Files can now be saved to a different drive when removing DRM only</li>
+<li>If any unhandled errors do occur, the error is logged and the application will exit</li>
+</ul>
+<h2>Download</h2>
+<p>With all that said, you can download the current installer below:<br />
+<a href="Codex-2.0beta2-setup.exe">Codex-2.0beta2-setup.exe</a> (59.9MB)</p>
+<p>Copyright &copy; 2015, James Scholes</p>

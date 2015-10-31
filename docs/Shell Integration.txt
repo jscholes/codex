@@ -1,0 +1,40 @@
+Create a Codex menu on all files and directories.  This is much simpler than figuring out individual filetype ProgIDs, which seem to change with the wind.  In the future maybe we can investigate further.
+
+Key: HKEY_CLASSES_ROOT\AllFilesystemObjects\shell\CodexMenu
+MUIVerb = Code&x
+SubCommands = RemoveDrm;ConvertToEpub;etc
+
+For each command, we have to add an entry to SubCommands, and then access:
+HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Explorer\CommandStore\Shell
+And add an entry for each one using the corresponding value from SubCommandList above as the key name.  Example:
+HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Explorer\CommandStore\Shell\RemoveDRM
+Default: &Remove DRM (localised)
+command:
+Default: codex.exe -r "%1"
+
+Because the menu labels will be localised, we'll need to re-initialise the shell integration when the user changes the language.  We can set a flag somewhere, perhaps using the existence of a file such as %appdata%\Codex\ResetShellIntegration
+
+Also, adding SubCommands is only supported on Windows 7 and up, so check that the Windows version is 6.1 or higher.  If not, we'll have to add top-level commands, as before.
+
+CodexShellIntegration
+    MUIVerb: Code&x
+    ExtendedSubCommandsKey: AllFilesystemObjects\shell\CodexShellIntegration\RootMenu
+    RootMenu
+        shell
+            Convert
+                MUIVerb: &Convert
+                command
+                    codex.exe "%1"
+            RemoveDrm
+                MUIVerb: &Remove DRM
+                command
+                    codex.exe -r "%1"
+            ConvertTo
+                MUIVerb: 'C&onvert to'
+                ExtendedSubCommandsKey: AllFilesystemObjects\shell\CodexShellIntegration\ConvertToMenu
+    ConvertToMenu
+        shell
+            epub
+                MUIVerb: ePub
+                command
+                    codex.exe -f epub "%1"
