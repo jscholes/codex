@@ -57,6 +57,13 @@ def main():
         shell_integration.setup()
     except shell_integration.ShellIntegrationError:
         wx.MessageBox(_('Unfortunately there was a problem integrating Codex with Windows Explorer.  Please contact the application developer.'), _('Shell Integration Error'), wx.ICON_ERROR)
+    except shell_integration.ShellIntegrationNotSupportedError:
+        if 'shell_integration_not_supported' in application.config.keys():
+            pass
+        else:
+            wx.MessageBox(_('Unfortunately, Windows Explorer integration is not currently supported on this version of Windows.'), _('Shell Integration Error'), wx.ICON_ERROR)
+            application.config['shell_integration_not_supported'] = True
+            application.config.write()
 
     import calibre
     try:

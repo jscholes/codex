@@ -13,6 +13,9 @@ import conversion
 class ShellIntegrationError(Exception):
     pass
 
+class ShellIntegrationNotSupportedError(Exception):
+    pass
+
 READ_PERMISSIONS = KEY_ENUMERATE_SUB_KEYS|KEY_QUERY_VALUE|KEY_READ|KEY_WOW64_64KEY
 WRITE_PERMISSIONS = KEY_CREATE_SUB_KEY|KEY_SET_VALUE|KEY_WRITE|KEY_WOW64_64KEY
 HIVE = 'HKEY_CURRENT_USER'
@@ -97,6 +100,12 @@ def create_menu(menu):
     descriptor_handle.Close()
 
 def integrate():
+    windows_version = sys.getwindowsversion()
+    windows_version = float('{0}.{1}'.format(windows_version.major, windows_version.minor))
+    if windows_version < 6.1:
+        raise ShellIntegrationNotSupportedError
+        return
+
     for menu in menu_tree:
         create_menu(menu)
 
@@ -104,6 +113,11 @@ def setup():
     try:
         if not is_integrated() or hasattr(application, 'reset_shell_integration'):
             integrate()
+            try:
+                application.config.pop('shell_integration_not_supported')
+                application.config.write()
+            except KeyError:
+                pass
         else:
             application.logger.debug('Shell integration already set up.')
     except PermissionError:
