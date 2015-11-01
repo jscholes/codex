@@ -7,6 +7,6 @@ import sys
 title = 'Codex'
 internal_name = 'codex2'
 gettext_domain = 'codex'
-version = '2.0beta2'
+version = '2.0beta3'
 debug = True
 is_frozen = hasattr(sys, 'frozen')
