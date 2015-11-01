@@ -208,8 +208,9 @@ class CalibredbAdd(BaseCommand):
         super(CalibredbAdd, self).__init__(*args, **kwargs)
 
     def _process_output(self):
-        # First, make sure the DRM removal didn't fail
-        if drm_removal_error in self.stdout:
+        # First, make sure the DRM removal didn't fail, but only if we're not converting
+        # If the DRM couldn't be removed, conversion will fail anyway.  This avoids false positives on PDFs
+        if drm_removal_error in self.stdout and conversion.remove_drm_only:
             self.log_error()
             raise DRMRemovalError
 

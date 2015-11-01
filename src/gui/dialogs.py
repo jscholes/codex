@@ -117,7 +117,10 @@ class ConversionProgressDialog(BaseDialog):
 class ConversionCompleteDialog(BaseDialog):
     def __init__(self, parent, *args, **kwargs):
         if conversion.remove_drm_only:
-            self._title = _('DRM removed')
+            if len(conversion.converted_files) == 0:
+                self._title = _('DRM not removed')
+            else:
+                self._title = _('DRM removed')
         else:
             self._title = _('Conversion Complete')
         super(ConversionCompleteDialog, self).__init__(parent=parent, *args, **kwargs)
@@ -139,7 +142,7 @@ class ConversionCompleteDialog(BaseDialog):
             self.open_file_button = create_button(self.panel, _('&Open file'), self.onOpenFile)
 
         if len(conversion.failed_conversions) > 0:
-            failed_conversions_label = wx.StaticText(self.panel, label=_('&Failed conversions'))
+            failed_conversions_label = wx.StaticText(self.panel, label=_('&Errors'))
             self.failed_conversions = wx.ListBox(self.panel, style=wx.LB_NEEDED_SB)
             self.failed_conversions.SetSizerProps(expand=True, proportion=1)
             self.failed_conversions.Set([book.input_path for book in conversion.failed_conversions])
