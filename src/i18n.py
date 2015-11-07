@@ -34,5 +34,5 @@ def setup():
     application.wx_app.locale.AddCatalogLookupPathPrefix(locale_path)
     application.wx_app.locale.AddCatalog('wxstd')
     application.wx_app.locale.Init(language=wx_locale)
-    
+
     application.logger.info('Application locale set to: {0} ({1})'.format(locale_name, locale_code))
