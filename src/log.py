@@ -54,8 +54,9 @@ def setup():
     log_file.setFormatter(logging.Formatter('%(levelname)s: %(message)s'))
     logger.addHandler(log_file)
     application.logger = logger
-    sys.excepthook = excepthook
-    add_threading_excepthook(excepthook)
+    if application.is_frozen:
+        sys.excepthook = excepthook
+        add_threading_excepthook(excepthook)
 
     if application.debug:
         application.logger.debug('Debug logging enabled')

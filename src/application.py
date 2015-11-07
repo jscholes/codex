@@ -5,8 +5,10 @@
 import sys
 
 title = 'Codex'
+author = 'James Scholes'
+url = 'http://jscholes.net/project/codex/'
+version = '2.0'
 internal_name = 'codex2'
 gettext_domain = 'codex'
-version = '2.0beta3'
-debug = True
+debug = False
 is_frozen = hasattr(sys, 'frozen')

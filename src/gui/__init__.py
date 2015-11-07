@@ -4,6 +4,7 @@
 # See the file LICENSE.txt for more details.
 import os.path
 import subprocess
+import webbrowser
 
 import wx
 import wx.lib.sized_controls as sc
@@ -23,6 +24,18 @@ class MainWindow(sc.SizedFrame):
         super(MainWindow, self).__init__(None, -1, _(application.title), size=(800, 600), style=wx.DEFAULT_FRAME_STYLE, *args, **kwargs)
         self.Centre()
         self.setup_layout()
+        self.setup_help_menu()
+
+    def open_readme(self):
+        if not application.is_frozen:
+            return
+        documentation_directory = os.path.join(application.application_path, 'documentation')
+        language = application.config['interface_language']
+        readme_path = os.path.join(documentation_directory, 'readme-{0}.html'.format(language))
+        if not os.path.exists(readme_path):
+            readme_path = os.path.join(documentation_directory, 'readme-en.html')
+
+        webbrowser.open(readme_path)
 
     def remove_file(self, selected_item):
         if selected_item != -1:
@@ -69,8 +82,15 @@ class MainWindow(sc.SizedFrame):
         options_button = create_button(main_buttons_panel, _('O&ptions'), self.onOptions, id=wx.ID_PREFERENCES)
         if not application.is_frozen:
             calibre_environment_button = create_button(main_buttons_panel, '&Launch Calibre environment', self.onCalibreEnvironment)
-        about_button = create_button(main_buttons_panel, _('&About'), self.onAbout, wx.ID_ABOUT)
+        self.help_button = create_button(main_buttons_panel, _('&Help'), self.onHelp, wx.ID_HELP)
         exit_button = create_button(main_buttons_panel, _('E&xit'), self.onExit, id=wx.ID_EXIT)
+
+    def setup_help_menu(self):
+        self.help_menu = wx.Menu()
+        help_menu_documentation = self.help_menu.Append(wx.NewId(), _('&Documentation'))
+        self.Bind(wx.EVT_MENU, self.onDocumentation, help_menu_documentation)
+        help_menu_about = self.help_menu.Append(wx.ID_ABOUT, _('&About'))
+        self.Bind(wx.EVT_MENU, self.onAbout, help_menu_about)
 
     def reset(self):
         self.files_list.Clear()
@@ -131,6 +151,12 @@ class MainWindow(sc.SizedFrame):
     def onCalibreEnvironment(self, event):
         calibre.setup()
         subprocess.Popen(['cmd.exe'], cwd=calibre.calibre_path, creationflags=subprocess.CREATE_NEW_CONSOLE)
+
+    def onHelp(self, event):
+        self.PopupMenu(self.help_menu, self.help_button.GetScreenPosition())
+
+    def onDocumentation(self, event):
+        self.open_readme()
 
     def onAbout(self, event):
         about_dialog = dialogs.AboutDialog(self)
