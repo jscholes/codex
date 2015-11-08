@@ -73,7 +73,7 @@ def generate_readme(language_code):
         html_template = f.read()
 
     readme = string.Template(html_template)
-    output = readme.substitute(
+    output = readme.safe_substitute(
         lang=language_code,
         title=application.title,
         version=application.version,
