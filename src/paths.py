@@ -19,7 +19,12 @@ def get_user_documents_path():
     return buffer.value
 
 def get_user_application_data_path():
-    return os.path.expandvars('%appdata%')
+    CSIDL_APPDATA = 26
+    SHGFP_TYPE_CURRENT = 1
+    buffer = ctypes.create_unicode_buffer(ctypes.wintypes.MAX_PATH)
+    ctypes.windll.shell32.SHGetFolderPathW(None, CSIDL_APPDATA, None, SHGFP_TYPE_CURRENT, buffer)
+
+    return buffer.value
 
 def setup():
     if application.is_frozen:
