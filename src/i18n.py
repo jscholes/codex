@@ -3,6 +3,7 @@
 # Copyright (C) 2015 James Scholes
 # This program is free software, licensed under the terms of the GNU General Public License (version 3 or later).
 # See the file LICENSE.txt for more details.
+import builtins
 import gettext
 import os.path
 
@@ -30,6 +31,7 @@ def setup():
 
     trans = gettext.translation(domain=application.gettext_domain, localedir=locale_path, languages=[locale_code], fallback=True)
     trans.install()
+    builtins.__dict__['__'] = trans.ngettext
     application.wx_app.locale = wx.Locale()
     application.wx_app.locale.AddCatalogLookupPathPrefix(locale_path)
     application.wx_app.locale.AddCatalog('wxstd')
