@@ -6,6 +6,7 @@ import argparse
 import sys
 import time
 
+import accessible_output2 as ao
 import wx
 
 import application
@@ -71,6 +72,9 @@ def main():
     except calibre.InitialisationError:
         wx.MessageBox(_('Unfortunately, there was a problem initialising the configuration settings for Calibre, the tool Codex uses for eBook conversion and DRM removal.'), _('Configuration Error'), wx.ICON_ERROR)
         sys.exit(1)
+
+    import speech
+    speech.setup()
 
     if len(sys.argv) > 1:
         process_command_line()
