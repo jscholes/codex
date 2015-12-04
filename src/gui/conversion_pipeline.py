@@ -43,9 +43,11 @@ def start(parent=None):
         cleanup()
         return
 
-    conversion_complete_dialog = dialogs.ConversionCompleteDialog(parent)
-    conversion_complete_dialog.ShowModal()
-    conversion_complete_dialog.Destroy()
+    show_conversion_complete_dialog = application.config['show_conversion_complete_dialog'] or len(conversion.failed_conversions) > 0
+    if show_conversion_complete_dialog:
+        conversion_complete_dialog = dialogs.ConversionCompleteDialog(parent)
+        conversion_complete_dialog.ShowModal()
+        conversion_complete_dialog.Destroy()
     cleanup()
 
 def cleanup():

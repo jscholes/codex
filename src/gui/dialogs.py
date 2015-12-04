@@ -131,8 +131,9 @@ class ConversionCompleteDialog(BaseDialog):
                 converted_files_label = wx.StaticText(self.panel, label=_('&Processed files'))
             else:
                 converted_files_label = wx.StaticText(self.panel, label=_('&Converted files'))
-            self.converted_files = wx.ListBox(self.panel, style=wx.LB_NEEDED_SB)
+            self.converted_files = wx.ListBox(self.panel, style=wx.LB_NEEDED_SB|wx.LB_EXTENDED)
             self.converted_files.SetSizerProps(expand=True, proportion=1)
+            self.converted_files.Bind(wx.EVT_KEY_UP, self.onConvertedFilesKeyPressed)
 
             for book in conversion.converted_files:
                 book_string = '{0} - {1}'.format(book.author, book.title)
@@ -155,6 +156,30 @@ class ConversionCompleteDialog(BaseDialog):
         self.SetButtonSizer(button_sizer)
         self.SetEscapeId(wx.ID_CLOSE)
 
+    def onConvertedFilesKeyPressed(self, event):
+        if event.GetKeyCode() == 67 and event.ControlDown():
+            try:
+                selected_items = self.converted_files.GetSelections()
+                books = []
+                for index in selected_items:
+                    books.append(self.converted_files.GetClientData(index))
+
+                if wx.TheClipboard.Open():
+                    object = wx.FileDataObject()
+                    for book in books:
+                        object.AddFile(book.output_path.lstrip('\\\\?\\'))
+
+                    wx.TheClipboard.SetData(object)
+                    wx.TheClipboard.Flush()
+                    books_copied = len(books)
+                    application.speaker.speak(__('Copied {0} book to clipboard', 'Copied {0} books to clipboard', books_copied).format(books_copied))
+            except wx.PyAssertionError:
+                pass
+            finally:
+                wx.TheClipboard.Close()
+        else:
+            event.Skip()
+
     def onOpenFile(self, event):
         try:
             book = self.converted_files.GetClientData(self.converted_files.GetSelection())
@@ -176,7 +201,7 @@ class ConversionCompleteDialog(BaseDialog):
 class OptionsDialog(BaseDialog):
     _title = _('Codex Options')
 
-    def create_checkbox(self, label='', config_key=''):
+    def create_checkbox(self, label, config_key):
         control = wx.CheckBox(self.panel, -1, label)
         control.SetValue(application.config[config_key])
 
@@ -187,6 +212,7 @@ class OptionsDialog(BaseDialog):
         output_directory_browse_button = create_button(self.panel, _('&Browse...'), self.onOutputDirectoryBrowse)
         self.output_filename_template = create_labelled_field(self.panel, _('&Output filename template'), application.config['filename_template'])
         self.default_output_format = get_output_format_choices(self.panel, _('&Default output format'))
+        self.show_conversion_complete_dialog = self.create_checkbox(label=_('&Show conversion complete dialog'), config_key='show_conversion_complete_dialog')
 
         ok_button = wx.Button(self.panel, wx.ID_OK)
         cancel_button = wx.Button(self.panel, wx.ID_CANCEL)
@@ -222,6 +248,7 @@ class OptionsDialog(BaseDialog):
             application.config['output_directory'] = output_directory
             application.config['filename_template'] = self.output_filename_template.GetValue()
             application.config['default_output_format'] = self.default_output_format.GetClientData(self.default_output_format.GetSelection())
+            application.config['show_conversion_complete_dialog'] = self.show_conversion_complete_dialog.IsChecked()
             application.main_window.output_formats.SetStringSelection(self.default_output_format.GetStringSelection())
 
             validation_result = application.config.validate(application.config_validator)
