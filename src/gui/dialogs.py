@@ -140,6 +140,7 @@ class ConversionCompleteDialog(BaseDialog):
 
             self.converted_files.SetSelection(0)
             self.open_file_button = create_button(self.panel, _('&Open file'), self.onOpenFile)
+            self.open_folder_button = create_button(self.panel, _('Open fol&der'), self.onOpenFolder)
 
         if len(conversion.failed_conversions) > 0:
             failed_conversions_label = wx.StaticText(self.panel, label=_('&Errors'))
@@ -160,6 +161,13 @@ class ConversionCompleteDialog(BaseDialog):
             os.startfile(book.output_path)
             if len(conversion.converted_files) == 1 and len(conversion.failed_conversions) == 0:
                 self.EndModal(wx.ID_CLOSE)
+        except wx.PyAssertionError:
+            wx.MessageBox(_('No file selected.'), _('Error'), wx.ICON_ERROR, parent=self)
+
+    def onOpenFolder(self, event):
+        try:
+            book = self.converted_files.GetClientData(self.converted_files.GetSelection())
+            os.startfile(os.path.dirname(book.output_path))
         except wx.PyAssertionError:
             wx.MessageBox(_('No file selected.'), _('Error'), wx.ICON_ERROR, parent=self)
 
