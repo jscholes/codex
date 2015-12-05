@@ -133,7 +133,7 @@ class ConversionCompleteDialog(BaseDialog):
                 converted_files_label = wx.StaticText(self.panel, label=_('&Converted files'))
             self.converted_files = wx.ListBox(self.panel, style=wx.LB_NEEDED_SB|wx.LB_EXTENDED)
             self.converted_files.SetSizerProps(expand=True, proportion=1)
-            self.converted_files.Bind(wx.EVT_KEY_UP, self.onConvertedFilesKeyPressed)
+            self.converted_files.Bind(wx.EVT_CHAR, self.onConvertedFilesKeyPressed)
 
             for book in conversion.converted_files:
                 book_string = '{0} - {1}'.format(book.author, book.title)
@@ -157,7 +157,8 @@ class ConversionCompleteDialog(BaseDialog):
         self.SetEscapeId(wx.ID_CLOSE)
 
     def onConvertedFilesKeyPressed(self, event):
-        if event.GetKeyCode() == 67 and event.ControlDown():
+        # if event.GetKeyCode() == 67 and event.ControlDown():
+        if event.GetKeyCode() == wx.WXK_CONTROL_C:
             try:
                 selected_items = self.converted_files.GetSelections()
                 books = []
