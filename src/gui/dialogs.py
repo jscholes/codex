@@ -157,7 +157,6 @@ class ConversionCompleteDialog(BaseDialog):
         self.SetEscapeId(wx.ID_CLOSE)
 
     def onConvertedFilesKeyPressed(self, event):
-        # if event.GetKeyCode() == 67 and event.ControlDown():
         if event.GetKeyCode() == wx.WXK_CONTROL_C:
             try:
                 selected_items = self.converted_files.GetSelections()
@@ -183,7 +182,7 @@ class ConversionCompleteDialog(BaseDialog):
 
     def onOpenFile(self, event):
         try:
-            book = self.converted_files.GetClientData(self.converted_files.GetSelection())
+            book = self.converted_files.GetClientData(self.converted_files.GetSelections()[0])
             os.startfile(book.output_path)
             if len(conversion.converted_files) == 1 and len(conversion.failed_conversions) == 0:
                 self.EndModal(wx.ID_CLOSE)
@@ -192,7 +191,7 @@ class ConversionCompleteDialog(BaseDialog):
 
     def onOpenFolder(self, event):
         try:
-            book = self.converted_files.GetClientData(self.converted_files.GetSelection())
+            book = self.converted_files.GetClientData(self.converted_files.GetSelections()[0])
             os.startfile(os.path.dirname(book.output_path))
         except wx.PyAssertionError:
             wx.MessageBox(_('No file selected.'), _('Error'), wx.ICON_ERROR, parent=self)
