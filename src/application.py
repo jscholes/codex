@@ -7,7 +7,7 @@ import sys
 title = 'Codex'
 author = 'James Scholes'
 url = 'http://jscholes.net/project/codex/'
-version = '2.0'
+version = '2.0.1'
 internal_name = 'codex2'
 gettext_domain = 'codex'
 debug = False
