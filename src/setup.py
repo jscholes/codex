@@ -9,6 +9,7 @@ import shutil
 import string
 import subprocess
 
+import accessible_output2
 import markdown
 from setuptools import setup, find_packages
 import py2exe
@@ -112,12 +113,18 @@ setup(
         ('calibre_base\\calibre_config\\metadata_sources', ['calibre_base\\calibre_config\\metadata_sources\\ISBNDB.json']),
         ('calibre_base\\calibre_library', ['calibre_base\\calibre_library\\metadata.db']),
         ('documentation', ['..\\docs\\style.css']),
-    ] + get_locale_data_files(),
-    zipfile=None,
+    ] + get_locale_data_files() + accessible_output2.find_datafiles(),
+    zipfile='pylib.zip',
     options={
         'py2exe': {
-            'optimize': 2,
+            'compressed': False,
             'dist_dir': distribution_directory,
+            'excludes': [
+                          '_ssl', 'calendar', 'difflib', 'doctest', 'email',
+                          'mimetypes', 'optparse', 'pdb', 'plistlib',
+                          'pydoc', 'quopri', 'ssl', 'win32com.gen_py',
+            ],
+            'optimize': 2,
         },
     },
 )
