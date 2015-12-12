@@ -247,6 +247,8 @@ class EbookConvert(BaseCommand):
     def __init__(self, input_path, output_path, options=None, *args, **kwargs):
         self.executable = calibre_executable_path('ebook-convert')
         self.command_args = [input_path, output_path]
+        if application.config['remove_smart_punctuation']:
+            self.command_args.append('--unsmarten-punctuation')
         super(EbookConvert, self).__init__(*args, **kwargs)
 
 

@@ -10,5 +10,5 @@ url = 'http://jscholes.net/project/codex/'
 version = '2.0.1'
 internal_name = 'codex2'
 gettext_domain = 'codex'
-debug = False
+debug = True
 is_frozen = hasattr(sys, 'frozen')
