@@ -89,6 +89,8 @@ class MainWindow(sc.SizedFrame):
         self.help_menu = wx.Menu()
         help_menu_documentation = self.help_menu.Append(wx.NewId(), _('&Documentation'))
         self.Bind(wx.EVT_MENU, self.onDocumentation, help_menu_documentation)
+        help_menu_home_page = self.help_menu.Append(wx.NewId(), _('&Codex home page'))
+        self.Bind(wx.EVT_MENU, self.onHomePage, help_menu_home_page)
         help_menu_about = self.help_menu.Append(wx.ID_ABOUT, _('&About'))
         self.Bind(wx.EVT_MENU, self.onAbout, help_menu_about)
 
@@ -157,6 +159,9 @@ class MainWindow(sc.SizedFrame):
 
     def onDocumentation(self, event):
         self.open_readme()
+
+    def onHomePage(self, event):
+        webbrowser.open(application.url)
 
     def onAbout(self, event):
         about_dialog = dialogs.AboutDialog(self)
