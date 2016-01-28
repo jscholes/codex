@@ -12,6 +12,7 @@ from wx.lib import sized_controls as sc
 
 import application
 import calibre
+import clipboard
 import conversion
 from signals import conversion_started, conversion_error, conversion_complete
 
@@ -125,6 +126,19 @@ class ConversionCompleteDialog(BaseDialog):
             self._title = _('Conversion Complete')
         super(ConversionCompleteDialog, self).__init__(parent=parent, *args, **kwargs)
 
+    def copy_selected_books_to_clipboard(self):
+        selected_items = self.converted_files.GetSelections()
+        book_paths = []
+        for index in selected_items:
+            book_paths.append(self.converted_files.GetClientData(index).output_path.lstrip('\\\\?\\'))
+
+        try:
+            clipboard.put_files_on_clipboard(book_paths)
+            books_copied = len(book_paths)
+            application.speaker.speak(__('Copied {0} book to clipboard', 'Copied {0} books to clipboard', books_copied).format(books_copied))
+        except clipboard.SetClipboardDataError:
+            application.speaker.speak(_('Error copying books to clipboard'))
+
     def setup_layout(self):
         if len(conversion.converted_files) > 0:
             if conversion.remove_drm_only:
@@ -159,24 +173,9 @@ class ConversionCompleteDialog(BaseDialog):
     def onConvertedFilesKeyPressed(self, event):
         if event.GetKeyCode() == wx.WXK_CONTROL_C:
             try:
-                selected_items = self.converted_files.GetSelections()
-                books = []
-                for index in selected_items:
-                    books.append(self.converted_files.GetClientData(index))
-
-                if wx.TheClipboard.Open():
-                    object = wx.FileDataObject()
-                    for book in books:
-                        object.AddFile(book.output_path.lstrip('\\\\?\\'))
-
-                    wx.TheClipboard.SetData(object)
-                    wx.TheClipboard.Flush()
-                    books_copied = len(books)
-                    application.speaker.speak(__('Copied {0} book to clipboard', 'Copied {0} books to clipboard', books_copied).format(books_copied))
+                self.copy_selected_books_to_clipboard()
             except wx.PyAssertionError:
                 pass
-            finally:
-                wx.TheClipboard.Close()
         else:
             event.Skip()
 
