@@ -11,6 +11,7 @@ import wx.lib.sized_controls as sc
 
 import application
 import calibre
+import clipboard
 import conversion
 import models
 import paths
@@ -54,6 +55,13 @@ class MainWindow(sc.SizedFrame):
             except wx.PyAssertionError:
                 pass
 
+    def paste_files_from_clipboard(self):
+        try:
+            clipboard_paths = clipboard.get_files_from_clipboard()
+            conversion_pipeline.add_paths(clipboard_paths, parent=self)
+        except clipboard.NoFilesOnClipboardError:
+            pass
+
     def setup_layout(self):
         main_panel = self.GetContentsPane()
         main_panel.SetSizerType('vertical')
@@ -61,7 +69,7 @@ class MainWindow(sc.SizedFrame):
         files_list_label = wx.StaticText(main_panel, label=_('&Files'))
         self.files_list = wx.ListBox(main_panel, style=wx.LB_NEEDED_SB)
         self.files_list.SetSizerProps(expand=True, proportion=1)
-        self.files_list.Bind(wx.EVT_KEY_DOWN, self.onFilesListKeyPressed)
+        self.files_list.Bind(wx.EVT_CHAR, self.onFilesListKeyPressed)
         self.files_list.Bind(wx.EVT_LISTBOX, self.onFilesListSelectionChange)
 
         files_list_buttons_panel = sc.SizedPanel(main_panel)
@@ -101,6 +109,8 @@ class MainWindow(sc.SizedFrame):
     def onFilesListKeyPressed(self, event):
         if event.GetKeyCode() == wx.WXK_DELETE and self.files_list.GetCount() != 0:
             self.remove_file(self.files_list.GetSelection())
+        elif event.GetKeyCode() == wx.WXK_CONTROL_V:
+            self.paste_files_from_clipboard()
         else:
             event.Skip()
 
