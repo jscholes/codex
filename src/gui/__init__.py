@@ -25,6 +25,7 @@ class MainWindow(sc.SizedFrame):
         super(MainWindow, self).__init__(None, -1, _(application.title), size=(800, 600), style=wx.DEFAULT_FRAME_STYLE, *args, **kwargs)
         self.Centre()
         self.setup_layout()
+        self.setup_tools_menu()
         self.setup_help_menu()
 
     def open_readme(self):
@@ -90,8 +91,12 @@ class MainWindow(sc.SizedFrame):
         options_button = create_button(main_buttons_panel, _('O&ptions'), self.onOptions, id=wx.ID_PREFERENCES)
         if not application.is_frozen:
             calibre_environment_button = create_button(main_buttons_panel, '&Launch Calibre environment', self.onCalibreEnvironment)
+        self.tools_button = create_button(main_buttons_panel, _('&Tools'), self.onTools)
         self.help_button = create_button(main_buttons_panel, _('&Help'), self.onHelp, wx.ID_HELP)
         exit_button = create_button(main_buttons_panel, _('E&xit'), self.onExit, id=wx.ID_EXIT)
+
+    def setup_tools_menu(self):
+        self.tools_menu = wx.Menu()
 
     def setup_help_menu(self):
         self.help_menu = wx.Menu()
@@ -165,6 +170,9 @@ class MainWindow(sc.SizedFrame):
     def onCalibreEnvironment(self, event):
         calibre.setup()
         subprocess.Popen(['cmd.exe'], cwd=calibre.calibre_path, creationflags=subprocess.CREATE_NEW_CONSOLE)
+
+    def onTools(self, event):
+        self.PopupMenu(self.tools_menu, self.help_button.GetScreenPosition())
 
     def onHelp(self, event):
         self.PopupMenu(self.help_menu, self.help_button.GetScreenPosition())
