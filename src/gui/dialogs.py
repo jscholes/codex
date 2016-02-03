@@ -215,6 +215,7 @@ class OptionsDialog(BaseDialog):
         self.default_output_format = get_output_format_choices(self.panel, _('&Default output format'))
         self.show_conversion_complete_dialog = self.create_checkbox(label=_('&Show conversion complete dialog'), config_key='show_conversion_complete_dialog')
         self.remove_smart_punctuation = self.create_checkbox(label=_('&Remove smart punctuation from converted files'), config_key='remove_smart_punctuation')
+        self.asciiize = self.create_checkbox(label=_('Re&place unicode characters with their ASCII equivalents (not recommended)'), config_key='asciiize')
 
         ok_button = wx.Button(self.panel, wx.ID_OK)
         cancel_button = wx.Button(self.panel, wx.ID_CANCEL)
@@ -252,6 +253,7 @@ class OptionsDialog(BaseDialog):
             application.config['default_output_format'] = self.default_output_format.GetClientData(self.default_output_format.GetSelection())
             application.config['show_conversion_complete_dialog'] = self.show_conversion_complete_dialog.IsChecked()
             application.config['remove_smart_punctuation'] = self.remove_smart_punctuation.IsChecked()
+            application.config['asciiize'] = self.asciiize.IsChecked()
             application.main_window.output_formats.SetStringSelection(self.default_output_format.GetStringSelection())
 
             validation_result = application.config.validate(application.config_validator)

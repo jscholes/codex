@@ -249,6 +249,8 @@ class EbookConvert(BaseCommand):
         self.command_args = [input_path, output_path]
         if application.config['remove_smart_punctuation']:
             self.command_args.append('--unsmarten-punctuation')
+        if application.config['asciiize']:
+            self.command_args.append('--asciiize')
         super(EbookConvert, self).__init__(*args, **kwargs)
 
 
