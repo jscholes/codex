@@ -97,6 +97,8 @@ class MainWindow(sc.SizedFrame):
 
     def setup_tools_menu(self):
         self.tools_menu = wx.Menu()
+        find_book_from_url = self.tools_menu.Append(wx.NewId(), _('&Find Kindle file from Amazon URL'))
+        self.Bind(wx.EVT_MENU, self.onFindBookFromUrl, find_book_from_url)
 
     def setup_help_menu(self):
         self.help_menu = wx.Menu()
@@ -176,6 +178,10 @@ class MainWindow(sc.SizedFrame):
 
     def onHelp(self, event):
         self.PopupMenu(self.help_menu, self.help_button.GetScreenPosition())
+
+    def onFindBookFromUrl(self, event):
+        find_dialog = dialogs.FindBookFromURLDialog(self)
+        find_dialog.ShowModal()
 
     def onDocumentation(self, event):
         self.open_readme()
