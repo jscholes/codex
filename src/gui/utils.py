@@ -9,12 +9,14 @@ import wx
 import application
 import conversion
 
+
 def create_button(parent, label='', callback=None, id=-1):
     control = wx.Button(parent, id=id, label=label)
     if callback and isinstance(callback, collections.Callable):
         control.Bind(wx.EVT_BUTTON, callback)
 
     return control
+
 
 def create_labelled_field(parent, label=None, text='', read_only=False):
     control_label = wx.StaticText(parent, label=label)
@@ -25,6 +27,7 @@ def create_labelled_field(parent, label=None, text='', read_only=False):
         control.SetWindowStyle(wx.TE_READONLY|wx.TE_NO_VSCROLL|wx.TE_MULTILINE)
 
     return control
+
 
 def get_output_format_choices(parent, label):
     label = wx.StaticText(parent, label=label)
@@ -41,3 +44,4 @@ def get_output_format_choices(parent, label):
 
     control.SetStringSelection(default_value)
     return control
+

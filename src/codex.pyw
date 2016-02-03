@@ -25,6 +25,7 @@ def process_command_line():
 
     application.command_line_args = args
 
+
 def main():
     application.wx_app = wx.App(False)
 
