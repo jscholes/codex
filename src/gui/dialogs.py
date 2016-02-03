@@ -210,14 +210,16 @@ class OptionsDialog(BaseDialog):
 
     def setup_layout(self):
         self.output_options = wx.StaticBox(self.panel, -1, _('Output'))
+        self.kindle_options = wx.StaticBox(self.panel, -1, _('Kindle'))
         self.conversion_options = wx.StaticBox(self.panel, -1, _('Conversion'))
-
-        output_directory_browse_button = create_button(self.output_options, _('&Browse...'), self.onOutputDirectoryBrowse)
 
         self.output_directory = create_labelled_field(self.output_options, _('&Output directory'), application.config['output_directory'])
         output_directory_browse_button = create_button(self.output_options, _('&Browse...'), self.onOutputDirectoryBrowse)
         self.output_filename_template = create_labelled_field(self.output_options, _('&Output filename template'), application.config['filename_template'])
         self.default_output_format = get_output_format_choices(self.output_options, _('&Default output format'))
+
+        self.kindle_content_directory = create_labelled_field(self.kindle_options, _('&Kindle content directory'), application.config['kindle_content_directory'])
+        kindle_content_directory_browse_button = create_button(self.kindle_options, _('&Browse...'), self.onKindleContentDirectoryBrowse)
 
         self.show_conversion_complete_dialog = self.create_checkbox(self.conversion_options, _('&Show conversion complete dialog'), 'show_conversion_complete_dialog')
         self.remove_smart_punctuation = self.create_checkbox(self.conversion_options, _('&Remove smart punctuation from converted files'), 'remove_smart_punctuation')
@@ -240,6 +242,12 @@ class OptionsDialog(BaseDialog):
         if result == wx.ID_OK:
             self.output_directory.SetValue(folder_dialog.GetPath())
 
+    def onKindleContentDirectoryBrowse(self, event):
+        folder_dialog = wx.DirDialog(self, message=_('Please select your Kindle content directory'), defaultPath=application.working_path, style=wx.DD_DEFAULT_STYLE)
+        result = folder_dialog.ShowModal()
+        if result == wx.ID_OK:
+            self.kindle_content_directory.SetValue(folder_dialog.GetPath())
+
     def onOK(self, event):
         should_save = False
         output_directory = os.path.expandvars(self.output_directory.GetValue())
@@ -253,8 +261,17 @@ class OptionsDialog(BaseDialog):
         elif not os.path.isdir(output_directory):
             wx.MessageBox(_('The output directory you\'ve chosen is not a folder!'), _('Error'), wx.ICON_ERROR, parent=self)
 
+        kindle_content_directory = os.path.expandvars(self.kindle_content_directory.GetValue())
+        if os.path.exists(kindle_content_directory) and os.path.isdir(kindle_content_directory):
+            should_save = True
+        elif not os.path.exists(kindle_content_directory):
+            wx.MessageBox(_('The Kindle content directory you\'ve chosen doesn\'t exist.'), _('Error'), wx.ICON_ERROR, parent=self)
+        elif not os.path.isdir(output_directory):
+            wx.MessageBox(_('The Kindle content directory you\'ve chosen is not a folder!'), _('Error'), wx.ICON_ERROR, parent=self)
+
         if should_save:
             application.config['output_directory'] = output_directory
+            application.config['kindle_content_directory'] = kindle_content_directory
             application.config['filename_template'] = self.output_filename_template.GetValue()
             application.config['default_output_format'] = self.default_output_format.GetClientData(self.default_output_format.GetSelection())
             application.config['show_conversion_complete_dialog'] = self.show_conversion_complete_dialog.IsChecked()
