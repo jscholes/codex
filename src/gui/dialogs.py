@@ -209,8 +209,10 @@ class OptionsDialog(BaseDialog):
         return control
 
     def setup_layout(self):
-        self.output_options = wx.StaticBox(self.panel, -1, _('Output options'))
-        self.conversion_options = wx.StaticBox(self.panel, -1, _('Conversion options'))
+        self.output_options = wx.StaticBox(self.panel, -1, _('Output'))
+        self.conversion_options = wx.StaticBox(self.panel, -1, _('Conversion'))
+
+        output_directory_browse_button = create_button(self.output_options, _('&Browse...'), self.onOutputDirectoryBrowse)
 
         self.output_directory = create_labelled_field(self.output_options, _('&Output directory'), application.config['output_directory'])
         output_directory_browse_button = create_button(self.output_options, _('&Browse...'), self.onOutputDirectoryBrowse)
