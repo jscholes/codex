@@ -14,8 +14,10 @@ import application
 import calibre
 import clipboard
 import conversion
+import kindle_finder
 from signals import conversion_started, conversion_error, conversion_complete
 
+import gui.conversion_pipeline
 from .utils import create_button, create_labelled_field, get_output_format_choices
 
 class BaseDialog(sc.SizedDialog):
@@ -260,6 +262,34 @@ class OptionsDialog(BaseDialog):
                 wx.MessageBox(_('There was a problem saving your configuration.'), _('Error'), wx.ICON_ERROR, parent=self)
                 application.logger.error('Config validation error: {0}'.format(validation_result))
 
+
+
+class FindBookFromURLDialog(BaseDialog):
+    _title = _('Find Kindle eBook File from Amazon URL')
+
+    def setup_layout(self):
+        dialog_label = wx.StaticText(self.panel)
+        dialog_label.SetLabel(_('To easily locate the eBook file for a Kindle book you\'ve just purchased and downloaded to this computer, please enter the URL of the book\'s product page on Amazon.'))
+        self.url = create_labelled_field(self.panel, _('&Amazon URL'))
+        ok_button = wx.Button(self.panel, wx.ID_OK)
+        cancel_button = wx.Button(self.panel, wx.ID_CANCEL)
+        ok_button.Bind(wx.EVT_BUTTON, self.onOK)
+        button_sizer = wx.StdDialogButtonSizer()
+        button_sizer.AddButton(ok_button)
+        button_sizer.AddButton(cancel_button)
+        self.SetButtonSizer(button_sizer)
+        self.SetAffirmativeId(wx.ID_OK)
+        self.SetEscapeId(wx.ID_CANCEL)
+
+    def onOK(self, event):
+        try:
+            ebook_path = kindle_finder.find_kindle_file_from_amazon_url(application.config['kindle_content_directory'], self.url.GetValue())
+            gui.conversion_pipeline.add_paths([ebook_path], parent=self)
+            self.EndModal(wx.ID_OK)
+        except kindle_finder.InvalidAmazonURLError as e:
+            wx.MessageBox(_('{0} doesn\'t seem to be a valid Amazon product URL.').format(e.url), _('Error'), wx.ICON_ERROR, parent=self)
+        except kindle_finder.BookNotFoundError:
+            wx.MessageBox(_('Codex was unable to locate an eBook file for this product on your computer.  If you\'ve changed the location of your Kindle content directory within the Kindle for PC software, please also change the corresponding setting in the Codex Options dialog.'), _('Error'), wx.ICON_ERROR, parent=self)
 
 
 class AboutDialog(BaseDialog):
