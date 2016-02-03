@@ -202,20 +202,24 @@ class ConversionCompleteDialog(BaseDialog):
 class OptionsDialog(BaseDialog):
     _title = _('Codex Options')
 
-    def create_checkbox(self, label, config_key):
-        control = wx.CheckBox(self.panel, -1, label)
+    def create_checkbox(self, parent, label, config_key):
+        control = wx.CheckBox(parent, -1, label)
         control.SetValue(application.config[config_key])
 
         return control
 
     def setup_layout(self):
-        self.output_directory = create_labelled_field(self.panel, _('&Output directory'), application.config['output_directory'])
-        output_directory_browse_button = create_button(self.panel, _('&Browse...'), self.onOutputDirectoryBrowse)
-        self.output_filename_template = create_labelled_field(self.panel, _('&Output filename template'), application.config['filename_template'])
-        self.default_output_format = get_output_format_choices(self.panel, _('&Default output format'))
-        self.show_conversion_complete_dialog = self.create_checkbox(label=_('&Show conversion complete dialog'), config_key='show_conversion_complete_dialog')
-        self.remove_smart_punctuation = self.create_checkbox(label=_('&Remove smart punctuation from converted files'), config_key='remove_smart_punctuation')
-        self.asciiize = self.create_checkbox(label=_('Re&place unicode characters with their ASCII equivalents (not recommended)'), config_key='asciiize')
+        self.output_options = wx.StaticBox(self.panel, -1, _('Output options'))
+        self.conversion_options = wx.StaticBox(self.panel, -1, _('Conversion options'))
+
+        self.output_directory = create_labelled_field(self.output_options, _('&Output directory'), application.config['output_directory'])
+        output_directory_browse_button = create_button(self.output_options, _('&Browse...'), self.onOutputDirectoryBrowse)
+        self.output_filename_template = create_labelled_field(self.output_options, _('&Output filename template'), application.config['filename_template'])
+        self.default_output_format = get_output_format_choices(self.output_options, _('&Default output format'))
+
+        self.show_conversion_complete_dialog = self.create_checkbox(self.conversion_options, _('&Show conversion complete dialog'), 'show_conversion_complete_dialog')
+        self.remove_smart_punctuation = self.create_checkbox(self.conversion_options, _('&Remove smart punctuation from converted files'), 'remove_smart_punctuation')
+        self.asciiize = self.create_checkbox(self.conversion_options, _('Re&place unicode characters with their ASCII equivalents (not recommended)'), 'asciiize')
 
         ok_button = wx.Button(self.panel, wx.ID_OK)
         cancel_button = wx.Button(self.panel, wx.ID_CANCEL)

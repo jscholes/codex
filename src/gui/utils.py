@@ -21,7 +21,10 @@ def create_button(parent, label='', callback=None, id=-1):
 def create_labelled_field(parent, label=None, text='', read_only=False):
     control_label = wx.StaticText(parent, label=label)
     control = wx.TextCtrl(parent, -1, text)
-    control.SetSizerProps(expand=True)
+    try:
+        control.SetSizerProps(expand=True)
+    except AttributeError:
+        pass
 
     if read_only:
         control.SetWindowStyle(wx.TE_READONLY|wx.TE_NO_VSCROLL|wx.TE_MULTILINE)
@@ -32,7 +35,10 @@ def create_labelled_field(parent, label=None, text='', read_only=False):
 def get_output_format_choices(parent, label):
     label = wx.StaticText(parent, label=label)
     control = wx.ComboBox(parent, style=wx.CB_SIMPLE|wx.CB_READONLY)
-    control.SetSizerProps(expand=True)
+    try:
+        control.SetSizerProps(expand=True)
+    except AttributeError:
+        pass
 
     for format in conversion.OutputFormat:
         control.Append(format.value, format.name)
