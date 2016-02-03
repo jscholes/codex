@@ -215,11 +215,11 @@ class OptionsDialog(BaseDialog):
 
         self.output_directory = create_labelled_field(self.output_options, _('&Output directory'), application.config['output_directory'])
         output_directory_browse_button = create_button(self.output_options, _('&Browse...'), self.onOutputDirectoryBrowse)
-        self.output_filename_template = create_labelled_field(self.output_options, _('&Output filename template'), application.config['filename_template'])
+        self.output_filename_template = create_labelled_field(self.output_options, _('O&utput filename template'), application.config['filename_template'])
         self.default_output_format = get_output_format_choices(self.output_options, _('&Default output format'))
 
         self.kindle_content_directory = create_labelled_field(self.kindle_options, _('&Kindle content directory'), application.config['kindle_content_directory'])
-        kindle_content_directory_browse_button = create_button(self.kindle_options, _('&Browse...'), self.onKindleContentDirectoryBrowse)
+        kindle_content_directory_browse_button = create_button(self.kindle_options, _('Bro&wse...'), self.onKindleContentDirectoryBrowse)
 
         self.show_conversion_complete_dialog = self.create_checkbox(self.conversion_options, _('&Show conversion complete dialog'), 'show_conversion_complete_dialog')
         self.remove_smart_punctuation = self.create_checkbox(self.conversion_options, _('&Remove smart punctuation from converted files'), 'remove_smart_punctuation')
