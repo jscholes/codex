@@ -15,7 +15,6 @@ class KindleMetadataError(Exception):
 
 
 def get_title_and_author_from_kindle_file(path):
-    print(path)
     with open(path, 'rb') as f:
         data = f.read()
 
@@ -34,7 +33,6 @@ def get_title_and_author_from_kindle_file(path):
 
 
 def get_record(record_number, bytes):
-    # print('Getting record:', record_number)
     record_info_offset = get_record_info_offset(0)
     record_data_offset = get_record_data_offset(record_info_offset, bytes)
     next_record_info_offset = get_record_info_offset(1)
@@ -44,24 +42,18 @@ def get_record(record_number, bytes):
 
 def get_record_info_offset(record_number):
     record_info_offset = FIRST_RECORD_INFO_OFFSET + (8 * record_number)
-    # print('Record info offset:', record_info_offset)
     return record_info_offset
 
 
 def get_record_data_offset(record_info_offset, bytes):
     record_data_offset = struct.unpack('>i', bytes[record_info_offset:record_info_offset + 4])[0]
-    # print('Record data offset:', record_data_offset)
     return record_data_offset
 
 
 def get_exth_header(record_zero):
-    # print('Getting EXTH header')
     mobi_header_length = get_mobi_header_length(record_zero)
-    # print('MOBI header length:', mobi_header_length)
     exth_header_offset = mobi_header_length + 16
-    # print('EXTH header offset:', exth_header_offset)
     exth_header_length = get_exth_header_length(exth_header_offset, record_zero)
-    # print('EXTH header length:', exth_header_length)
     return record_zero[exth_header_offset:exth_header_offset + exth_header_length]
 
 
@@ -76,7 +68,6 @@ def get_exth_header_length(exth_header_offset, record_zero):
 
 def get_metadata_from_exth_header(exth_header):
     record_count = get_number_of_exth_records(exth_header)
-    # print('Number of EXTH records:', record_count)
     metadata_records = get_metadata_records(record_count, exth_header)
     return metadata_records
 
@@ -91,7 +82,6 @@ def get_metadata_records(record_count, exth_header):
     current_record = 1
     current_offset = 12
     while current_record <= record_count:
-        # print('Current record:', current_record, 'at offset:', current_offset)
         record_type = get_record_type(current_offset, exth_header)
         record_length = get_record_length(current_offset, exth_header)
         if record_type in exth_identifiers:
@@ -108,21 +98,17 @@ def get_metadata_records(record_count, exth_header):
 
 def get_record_type(offset, exth_header):
     record_type = struct.unpack('>i', exth_header[offset:offset + 4])[0]
-    # print('Record type:', record_type)
     return record_type
 
 
 def get_record_length(offset, exth_header):
     record_length = struct.unpack('>i', exth_header[offset + 4:offset + 8])[0]
-    # print('Record length:', record_length)
     return record_length
 
 
 def get_record_data(offset, record_length, exth_header):
     data_length = record_length - 8
-    # print('Record data length:', data_length)
     record_data = struct.unpack('>{0}s'.format(data_length), exth_header[offset + 8:offset + 8 + data_length])[0].decode('utf-8', errors='replace').replace('\x00', '')
-    # print('Record data:', record_data.encode('utf-8', errors='replace'))
     return record_data
 
 
