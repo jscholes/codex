@@ -261,3 +261,4 @@ class CalibreCustomizeAddPlugin(BaseCommand):
         self.command_args = ['-a', plugin_path]
         super(CalibreCustomizeAddPlugin, self).__init__(*args, **kwargs)
 
+

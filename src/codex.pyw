@@ -3,6 +3,7 @@
 # This program is free software, licensed under the terms of the GNU General Public License (version 3 or later).
 # See the file LICENSE.txt for more details.
 import argparse
+import os
 import sys
 import time
 
@@ -28,7 +29,6 @@ def process_command_line():
 
 def main():
     application.wx_app = wx.App(False)
-
     single_instance_checker = wx.SingleInstanceChecker()
     if single_instance_checker.IsAnotherRunning():
         wx.MessageBox('Another instance of Codex is already running.', 'Error', wx.ICON_ERROR)
