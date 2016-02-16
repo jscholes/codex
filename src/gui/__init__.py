@@ -99,6 +99,8 @@ class MainWindow(sc.SizedFrame):
         self.tools_menu = wx.Menu()
         find_book_from_url = self.tools_menu.Append(wx.NewId(), _('&Find Kindle file from Amazon URL'))
         self.Bind(wx.EVT_MENU, self.onFindBookFromUrl, find_book_from_url)
+        browse_kindle_books = self.tools_menu.Append(wx.NewId(), _('&Browse downloaded Kindle books'))
+        self.Bind(wx.EVT_MENU, self.onBrowseKindleBooks, browse_kindle_books)
 
     def setup_help_menu(self):
         self.help_menu = wx.Menu()
@@ -182,6 +184,19 @@ class MainWindow(sc.SizedFrame):
     def onFindBookFromUrl(self, event):
         find_dialog = dialogs.FindBookFromURLDialog(self)
         find_dialog.ShowModal()
+
+    def onBrowseKindleBooks(self, event):
+        if not os.path.exists(application.config['kindle_content_directory']):
+            wx.MessageBox(_('The configured Kindle content directory does not exist.'), _('Error'), wx.ICON_ERROR, parent=self)
+            return
+
+        kindle_files = os.listdir(application.config['kindle_content_directory'])
+        if len(kindle_files) == 0:
+            wx.MessageBox(_('No Kindle files found.'), _('Error'), wx.ICON_ERROR, parent=self)
+            return
+
+        books_dialog = dialogs.BrowseKindleBooksDialog(self, kindle_files)
+        books_dialog.ShowModal()
 
     def onDocumentation(self, event):
         self.open_readme()
