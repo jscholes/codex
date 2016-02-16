@@ -11,10 +11,10 @@ import wx
 from wx.lib import sized_controls as sc
 
 import application
-import calibre
 import clipboard
 import conversion
 import kindle_finder
+import kindle_metadata
 from signals import conversion_started, conversion_error, conversion_complete
 
 import gui.conversion_pipeline
@@ -266,8 +266,10 @@ class OptionsDialog(BaseDialog):
             should_save = True
         elif not os.path.exists(kindle_content_directory):
             wx.MessageBox(_('The Kindle content directory you\'ve chosen doesn\'t exist.'), _('Error'), wx.ICON_ERROR, parent=self)
+            should_save = False
         elif not os.path.isdir(output_directory):
             wx.MessageBox(_('The Kindle content directory you\'ve chosen is not a folder!'), _('Error'), wx.ICON_ERROR, parent=self)
+            should_save = False
 
         if should_save:
             application.config['output_directory'] = output_directory
@@ -315,6 +317,56 @@ class FindBookFromURLDialog(BaseDialog):
             wx.MessageBox(_('{0} doesn\'t seem to be a valid Amazon product URL.').format(e.url), _('Error'), wx.ICON_ERROR, parent=self)
         except kindle_finder.BookNotFoundError:
             wx.MessageBox(_('Codex was unable to locate an eBook file for this product on your computer.  If you\'ve changed the location of your Kindle content directory within the Kindle for PC software, please also change the corresponding setting in the Codex Options dialog.'), _('Error'), wx.ICON_ERROR, parent=self)
+
+
+class BrowseKindleBooksDialog(BaseDialog):
+    _title = _('Downloaded Kindle Books')
+
+    def __init__(self, parent, files, *args, **kwargs):
+        self.files = files
+        super().__init__(parent, *args, **kwargs)
+
+    def setup_layout(self):
+        books_label = wx.StaticText(self.panel, label=_('&Books'))
+        self.books_list = wx.ListBox(self.panel, style=wx.LB_NEEDED_SB|wx.LB_EXTENDED)
+        self.books_list.SetSizerProps(expand=True, proportion=1)
+        self.set_books_list_items()
+
+        ok_button = wx.Button(self.panel, wx.ID_OK)
+        cancel_button = wx.Button(self.panel, wx.ID_CANCEL)
+        ok_button.Bind(wx.EVT_BUTTON, self.onOK)
+        button_sizer = wx.StdDialogButtonSizer()
+        button_sizer.AddButton(ok_button)
+        button_sizer.AddButton(cancel_button)
+        self.SetButtonSizer(button_sizer)
+        self.SetAffirmativeId(wx.ID_OK)
+        self.SetEscapeId(wx.ID_CANCEL)
+
+    def set_books_list_items(self):
+        self.files.sort(key=lambda path: os.stat(os.path.join(application.config['kindle_content_directory'], path)).st_ctime)
+        kindle_files = [file for file in self.files if file.endswith('azw')]
+        for file in kindle_files[::-1]:
+            try:
+                full_path = os.path.join(application.config['kindle_content_directory'], file)
+                metadata = kindle_metadata.get_title_and_author_from_kindle_file(full_path)
+                metadata['author'] = ' '.join(metadata['author'].split(', ')[::-1])
+            except kindle_metadata.KindleMetadataError:
+                metadata = {'author': _('Unknown Author'), 'title': _('Unknown Title')}
+            self.books_list.Append('{0} - {1} ({2})'.format(metadata['author'], metadata['title'], file), full_path)
+
+        self.books_list.SetSelection(0)
+
+    def onBooksListKeyDown(self, event):
+        # if self.HandleAsNavigationKey(event):
+            # self.Navigate()
+        # if event.GetKeyCode() == wx.WXK_RETURN:
+        self.onOK(None)
+
+    def onOK(self, event):
+        selected_items = self.books_list.GetSelections()
+        selected_paths = [self.books_list.GetClientData(index) for index in selected_items]
+        gui.conversion_pipeline.add_paths(selected_paths, parent=self.GetParent())
+        self.EndModal(wx.ID_OK)
 
 
 class AboutDialog(BaseDialog):
