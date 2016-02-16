@@ -1,0 +1,128 @@
+# Codex
+# Copyright (C) 2015 James Scholes
+# This program is free software, licensed under the terms of the GNU General Public License (version 3 or later).
+# See the file LICENSE.txt for more details.
+
+import os.path
+import struct
+
+
+FIRST_RECORD_INFO_OFFSET = 78
+
+
+class KindleMetadataError(Exception):
+    pass
+
+
+def get_title_and_author_from_kindle_file(path):
+    print(path)
+    with open(path, 'rb') as f:
+        data = f.read()
+
+    if b'TPZ' in data[0:3]:
+        raise KindleMetadataError
+
+    try:
+        record_zero = get_record(0, data)
+        exth_header = get_exth_header(record_zero)
+        metadata_records = get_metadata_from_exth_header(exth_header)
+        if 'title' not in metadata_records.keys():
+            metadata_records['title'] = os.path.basename(path)
+        return metadata_records
+    except struct.Error:
+        raise KindleMetadataError
+
+
+def get_record(record_number, bytes):
+    # print('Getting record:', record_number)
+    record_info_offset = get_record_info_offset(0)
+    record_data_offset = get_record_data_offset(record_info_offset, bytes)
+    next_record_info_offset = get_record_info_offset(1)
+    next_record_data_offset = get_record_data_offset(next_record_info_offset, bytes)
+    return bytes[record_data_offset:next_record_data_offset]
+
+
+def get_record_info_offset(record_number):
+    record_info_offset = FIRST_RECORD_INFO_OFFSET + (8 * record_number)
+    # print('Record info offset:', record_info_offset)
+    return record_info_offset
+
+
+def get_record_data_offset(record_info_offset, bytes):
+    record_data_offset = struct.unpack('>i', bytes[record_info_offset:record_info_offset + 4])[0]
+    # print('Record data offset:', record_data_offset)
+    return record_data_offset
+
+
+def get_exth_header(record_zero):
+    # print('Getting EXTH header')
+    mobi_header_length = get_mobi_header_length(record_zero)
+    # print('MOBI header length:', mobi_header_length)
+    exth_header_offset = mobi_header_length + 16
+    # print('EXTH header offset:', exth_header_offset)
+    exth_header_length = get_exth_header_length(exth_header_offset, record_zero)
+    # print('EXTH header length:', exth_header_length)
+    return record_zero[exth_header_offset:exth_header_offset + exth_header_length]
+
+
+def get_mobi_header_length(record_zero):
+    return struct.unpack('>i', record_zero[20:24])[0]
+
+
+def get_exth_header_length(exth_header_offset, record_zero):
+    exth_header_length_offset = exth_header_offset + 4
+    return struct.unpack('>i', record_zero[exth_header_length_offset:exth_header_length_offset + 4])[0] + 16
+
+
+def get_metadata_from_exth_header(exth_header):
+    record_count = get_number_of_exth_records(exth_header)
+    # print('Number of EXTH records:', record_count)
+    metadata_records = get_metadata_records(record_count, exth_header)
+    return metadata_records
+
+
+def get_number_of_exth_records(exth_header):
+    return struct.unpack('>i', exth_header[8:12])[0]
+
+
+def get_metadata_records(record_count, exth_header):
+    metadata_records = {}
+    exth_identifiers = {100: 'author', 503: 'title'}
+    current_record = 1
+    current_offset = 12
+    while current_record <= record_count:
+        # print('Current record:', current_record, 'at offset:', current_offset)
+        record_type = get_record_type(current_offset, exth_header)
+        record_length = get_record_length(current_offset, exth_header)
+        if record_type in exth_identifiers:
+            metadata_records[exth_identifiers[record_type]] = get_record_data(current_offset, record_length, exth_header)
+            current_record += 1
+            current_offset += record_length
+        else:
+            current_record += 1
+            current_offset += record_length
+            continue
+
+    return metadata_records
+
+
+def get_record_type(offset, exth_header):
+    record_type = struct.unpack('>i', exth_header[offset:offset + 4])[0]
+    # print('Record type:', record_type)
+    return record_type
+
+
+def get_record_length(offset, exth_header):
+    record_length = struct.unpack('>i', exth_header[offset + 4:offset + 8])[0]
+    # print('Record length:', record_length)
+    return record_length
+
+
+def get_record_data(offset, record_length, exth_header):
+    data_length = record_length - 8
+    # print('Record data length:', data_length)
+    record_data = struct.unpack('>{0}s'.format(data_length), exth_header[offset + 8:offset + 8 + data_length])[0].decode('utf-8', errors='replace').replace('\x00', '')
+    # print('Record data:', record_data.encode('utf-8', errors='replace'))
+    return record_data
+
+
