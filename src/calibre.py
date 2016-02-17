@@ -7,6 +7,7 @@ import json
 import os
 import os.path
 import re
+import shlex
 import shutil
 import subprocess
 import tempfile
@@ -262,7 +263,8 @@ class EbookConvert(BaseCommand):
             self.command_args.append('--asciiize')
         extra_args = application.config['extra_ebook_convert_options']
         if extra_args:
-            self.command_args.append(extra_args)
+            extra_args = shlex.split(extra_args)
+            self.command_args += extra_args
         super(EbookConvert, self).__init__(*args, **kwargs)
 
 
