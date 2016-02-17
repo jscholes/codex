@@ -31,8 +31,13 @@ class DRMRemovalError(Exception):
     # Raised if the DeDRM plug-in could not decrypt a book
     pass
 
+class InvalidCalibreOptionError(Exception):
+    # Raised if the user has configured extra ebook-convert options which are not valid
+    pass
+
 book_id_re = re.compile(r'\nAdded book ids: ([0-9]+)\n')
 drm_removal_error = 'Ultimately failed to decrypt'
+invalid_option_error = 'error: no such option'
 no_drm = 'DRM free perhaps?'
 # Qt outputs a warning to stdout if we're on Windows 10
 qt_warnings = [
@@ -189,6 +194,10 @@ class BaseCommand(object):
             return False
 
     def process_output(self):
+        if invalid_option_error in self.stdout:
+            self.log_error()
+            raise InvalidCalibreOptionError
+
         if self.return_code is not None and self.return_code != 0:
             self.log_error()
             raise CommandError(self.return_code)
@@ -251,6 +260,9 @@ class EbookConvert(BaseCommand):
             self.command_args.append('--unsmarten-punctuation')
         if application.config['asciiize']:
             self.command_args.append('--asciiize')
+        extra_args = application.config['extra_ebook_convert_options']
+        if extra_args:
+            self.command_args.append(extra_args)
         super(EbookConvert, self).__init__(*args, **kwargs)
 
 
