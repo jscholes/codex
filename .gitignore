@@ -11,3 +11,5 @@ calibre/
 Codex-*
 setup.iss
 testers.txt
+beta_announcement.txt
+send_beta.py
