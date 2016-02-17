@@ -23,7 +23,8 @@ def setup():
     working_directory = string(default={default_working_directory})
     show_conversion_complete_dialog = boolean(default=True)
     remove_smart_punctuation = boolean(default=False)
-    asciiize = boolean(default=False)'''.format(default_output_directory=os.path.join(application.user_documents_path, 'eBooks'), kindle_content_directory=os.path.join(application.user_documents_path, 'My Kindle Content'), default_working_directory=application.user_documents_path))
+    asciiize = boolean(default=False)
+    extra_ebook_convert_options = string(default='')'''.format(default_output_directory=os.path.join(application.user_documents_path, 'eBooks'), kindle_content_directory=os.path.join(application.user_documents_path, 'My Kindle Content'), default_working_directory=application.user_documents_path))
 
     try:
         config = ConfigObj(infile=application.config_file, configspec=config_spec, create_empty=True, encoding='UTF8', unrepr=True)
