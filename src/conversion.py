@@ -136,6 +136,9 @@ class ConversionWorker(threading.Thread):
                 skip_current_file.clear()
                 calibre.reset_library_db()
                 continue
+            except calibre.InvalidCalibreOptionError:
+                self.send_signal(conversion_error, error_msg=_('One or more of the custom options provided to ebook-convert.exe were not valid.  Please check your configuration.'))
+                break
             except (FileNotFoundError, calibre.CommandError, calibre.DRMRemovalError) as e:
                 application.logger.exception('Exception occurred while converting file: {0}'.format(book.input_path))
                 failed_conversions.append(book)
