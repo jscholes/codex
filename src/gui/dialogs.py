@@ -157,6 +157,7 @@ class ConversionCompleteDialog(BaseDialog):
 
             self.converted_files.SetSelection(0)
             self.open_file_button = create_button(self.panel, _('&Open file'), self.onOpenFile)
+            self.open_file_button.SetDefault()
             self.open_folder_button = create_button(self.panel, _('Open fol&der'), self.onOpenFolder)
 
         if len(conversion.failed_conversions) > 0:
@@ -227,6 +228,7 @@ class OptionsDialog(BaseDialog):
         self.extra_ebook_convert_options = create_labelled_field(self.conversion_options, _('E&xtra options to pass to calibre ebook-convert command'), application.config['extra_ebook_convert_options'])
 
         ok_button = wx.Button(self.panel, wx.ID_OK)
+        ok_button.SetDefault()
         cancel_button = wx.Button(self.panel, wx.ID_CANCEL)
         ok_button.Bind(wx.EVT_BUTTON, self.onOK)
         button_sizer = wx.StdDialogButtonSizer()
@@ -268,7 +270,7 @@ class OptionsDialog(BaseDialog):
         elif not os.path.exists(kindle_content_directory):
             wx.MessageBox(_('The Kindle content directory you\'ve chosen doesn\'t exist.'), _('Error'), wx.ICON_ERROR, parent=self)
             should_save = False
-        elif not os.path.isdir(output_directory):
+        elif not os.path.isdir(kindle_content_directory):
             wx.MessageBox(_('The Kindle content directory you\'ve chosen is not a folder!'), _('Error'), wx.ICON_ERROR, parent=self)
             should_save = False
 
@@ -301,6 +303,7 @@ class FindBookFromURLDialog(BaseDialog):
         dialog_label.SetLabel(_('To easily locate the eBook file for a Kindle book you\'ve just purchased and downloaded to this computer, please enter the URL of the book\'s product page on Amazon.'))
         self.url = create_labelled_field(self.panel, _('&Amazon URL'))
         ok_button = wx.Button(self.panel, wx.ID_OK)
+        ok_button.SetDefault()
         cancel_button = wx.Button(self.panel, wx.ID_CANCEL)
         ok_button.Bind(wx.EVT_BUTTON, self.onOK)
         button_sizer = wx.StdDialogButtonSizer()
@@ -335,6 +338,7 @@ class BrowseKindleBooksDialog(BaseDialog):
         self.set_books_list_items()
 
         ok_button = wx.Button(self.panel, wx.ID_OK)
+        ok_button.SetDefault()
         cancel_button = wx.Button(self.panel, wx.ID_CANCEL)
         ok_button.Bind(wx.EVT_BUTTON, self.onOK)
         button_sizer = wx.StdDialogButtonSizer()
