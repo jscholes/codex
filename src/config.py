@@ -27,7 +27,7 @@ def setup():
     extra_ebook_convert_options = string(default='')'''.format(default_output_directory=os.path.join(application.user_documents_path, 'eBooks'), kindle_content_directory=os.path.join(application.user_documents_path, 'My Kindle Content'), default_working_directory=application.user_documents_path))
 
     try:
-        config = ConfigObj(infile=application.config_file, configspec=config_spec, create_empty=True, encoding='UTF8', unrepr=True)
+        config = ConfigObj(infile=application.config_file, configspec=config_spec, create_empty=True, encoding='UTF8', default_encoding='UTF8', unrepr=True)
     except ConfigObjError:
         application.logger.critical('Error loading config from: {0}'.format(application.config_file), exc_info=sys.exc_info())
         raise ConfigLoadError
