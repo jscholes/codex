@@ -5,6 +5,7 @@
 import os
 import os.path
 import sys
+import threading
 import time
 
 import wx
@@ -361,12 +362,6 @@ class BrowseKindleBooksDialog(BaseDialog):
             self.books_list.Append('{0} - {1} ({2})'.format(metadata['author'], metadata['title'], file), full_path)
 
         self.books_list.SetSelection(0)
-
-    def onBooksListKeyDown(self, event):
-        # if self.HandleAsNavigationKey(event):
-            # self.Navigate()
-        # if event.GetKeyCode() == wx.WXK_RETURN:
-        self.onOK(None)
 
     def onOK(self, event):
         selected_items = self.books_list.GetSelections()
