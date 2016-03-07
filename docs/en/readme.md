@@ -100,6 +100,9 @@ This option is great for quickly locating the most recent books you've downloade
 
 Note: In order to avoid slowing down the Codex user interface, this dialog loads book information in the background.  Therefore, if you find that not all of your books have appeared in the list, it should only take a couple of seconds at most to see them.  Likewise, if you're only interested in a file at or near the top of the list, but you have a large Kindle library, you don't have to wait for information for every book to be retrieved before making your selection.
 
+##Clipboard functions
+For convenience, you may paste files copied from Windows Explorer or other applications straight into the Codex Files list.  You may also press Ctrl+C after selecting one or more books in the Conversion complete dialog to copy them to the clipboard for pasting elsewhere.
+
 ##Options
 The Codex Options dialog, accessible from the main window, offers the following settings:
 
