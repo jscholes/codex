@@ -329,6 +329,8 @@ class BrowseKindleBooksDialog(BaseDialog):
     _title = _('Downloaded Kindle Books')
 
     def __init__(self, parent, files, *args, **kwargs):
+        self.dismissed = False
+        self.item_has_focus = False
         self.files = files
         super().__init__(parent, *args, **kwargs)
 
@@ -336,12 +338,16 @@ class BrowseKindleBooksDialog(BaseDialog):
         books_label = wx.StaticText(self.panel, label=_('&Books'))
         self.books_list = wx.ListBox(self.panel, style=wx.LB_NEEDED_SB|wx.LB_EXTENDED)
         self.books_list.SetSizerProps(expand=True, proportion=1)
-        self.set_books_list_items()
+        self.books_list.Bind(wx.EVT_LISTBOX, self.onBooksListSelectionChange)
+        self.loader_thread = threading.Thread(target=self.set_books_list_items)
+        self.loader_thread.setDaemon(True)
+        self.loader_thread.start()
 
         ok_button = wx.Button(self.panel, wx.ID_OK)
         ok_button.SetDefault()
         cancel_button = wx.Button(self.panel, wx.ID_CANCEL)
         ok_button.Bind(wx.EVT_BUTTON, self.onOK)
+        cancel_button.Bind(wx.EVT_BUTTON, self.onCancel)
         button_sizer = wx.StdDialogButtonSizer()
         button_sizer.AddButton(ok_button)
         button_sizer.AddButton(cancel_button)
@@ -353,22 +359,39 @@ class BrowseKindleBooksDialog(BaseDialog):
         self.files.sort(key=lambda path: os.stat(os.path.join(application.config['kindle_content_directory'], path)).st_ctime)
         kindle_files = [file for file in self.files if file.endswith('azw')]
         for file in kindle_files[::-1]:
+            if self.dismissed:
+                return
             try:
                 full_path = os.path.join(application.config['kindle_content_directory'], file)
                 metadata = kindle_metadata.get_title_and_author_from_kindle_file(full_path)
                 metadata['author'] = ' '.join(metadata['author'].split(', ')[::-1])
             except kindle_metadata.KindleMetadataError:
                 metadata = {'author': _('Unknown Author'), 'title': _('Unknown Title')}
-            self.books_list.Append('{0} - {1} ({2})'.format(metadata['author'], metadata['title'], file), full_path)
+            wx.CallAfter(self.books_list.Append, '{0} - {1} ({2})'.format(metadata['author'], metadata['title'], file), full_path)
+            if not self.item_has_focus:
+                wx.CallAfter(self.books_list.SetSelection, 0)
+                self.item_has_focus = True
 
-        self.books_list.SetSelection(0)
+        loaded_files = len(kindle_files)
+        application.speaker.speak(__('Found {0} Kindle book', 'Found {0} Kindle books', loaded_files).format(loaded_files))
+
+    def onBooksListSelectionChange(self, event):
+        is_selection = event.GetExtraLong()
+        if is_selection:
+            self.item_has_focus = True
+        else:
+            self.item_has_focus = False
 
     def onOK(self, event):
+        self.dismissed = True
         selected_items = self.books_list.GetSelections()
         selected_paths = [self.books_list.GetClientData(index) for index in selected_items]
         gui.conversion_pipeline.add_paths(selected_paths, parent=self.GetParent())
         self.EndModal(wx.ID_OK)
 
+    def onCancel(self, event):
+        self.dismissed = True
+        self.EndModal(wx.ID_CANCEL)
 
 class AboutDialog(BaseDialog):
     _title = _('About {name}').format(name=application.title)
