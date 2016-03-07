@@ -356,8 +356,6 @@ class BrowseKindleBooksDialog(BaseDialog):
         self.SetEscapeId(wx.ID_CANCEL)
 
     def set_books_list_items(self):
-        # self.files.sort(key=lambda path: os.stat(os.path.join(application.config['kindle_content_directory'], path)).st_ctime)
-        # kindle_files = [file for file in self.files if file.endswith('azw')]
         for file in self.files[::-1]:
             if self.dismissed:
                 return
