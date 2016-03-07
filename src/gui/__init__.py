@@ -191,8 +191,10 @@ class MainWindow(sc.SizedFrame):
             return
 
         kindle_files = os.listdir(application.config['kindle_content_directory'])
+        kindle_files.sort(key=lambda path: os.stat(os.path.join(application.config['kindle_content_directory'], path)).st_ctime)
+        kindle_files = [file for file in kindle_files if file.endswith('azw')]
         if len(kindle_files) == 0:
-            wx.MessageBox(_('No Kindle files found.'), _('Error'), wx.ICON_ERROR, parent=self)
+            wx.MessageBox(_('No Kindle files found.  Please make sure that the Kindle content directory setting is correct in the Codex Options dialog.'), _('Error'), wx.ICON_ERROR, parent=self)
             return
 
         books_dialog = dialogs.BrowseKindleBooksDialog(self, kindle_files)
