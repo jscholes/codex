@@ -8,9 +8,7 @@ home_page_link_text: Project Home Page
 ##Introduction
 Codex is a software application which aims to make the process of eBook conversion and DRM removal as easy, customisable and, of course, screen reader accessible as possible.  It offers a simple interface as well as integration with Windows Explorer (and other third party shells should you use one) and uses the excellent [calibre eBook management software](http://calibre-ebook.com/) behind the scenes to make most of the magic happen.
 
-Codex would probably not exist without calibre, but calibre's user interface is not at all screen reader friendly.  Thus, you can think of Codex as some particularly fancy glue to stick everything together.  I have plans to make it much more than that in the future, however.
-
-Having said all that, you don't need to obtain, install or even know anything about calibre in order to use Codex.  It is only mentioned here to give credit where credit is due.  Codex also uses DRM removal plug-ins from [Apprentice Alf’s Blog](https://apprenticealf.wordpress.com/), but again, the installation and configuration of these is handled automatically for you.
+Codex would probably not exist without calibre, but calibre's user interface is not at all screen reader friendly.  Thus, you can think of Codex as some particularly fancy glue to stick everything together.  Having said that, you don't need to obtain, install or even know anything about calibre in order to use Codex.  It is only mentioned here to give credit where credit is due.  Codex also uses DRM removal plug-ins from [Apprentice Alf’s Blog](https://apprenticealf.wordpress.com/), but again, the installation and configuration of these is handled automatically for you.
 
 Important note: Throughout this readme file, you will see references to Windows Explorer integration.  This is a convenience feature provided by Codex, but unfortunately, it is not available on Windows versions earlier than Windows 7 at this time.
 
@@ -91,22 +89,37 @@ If you wish to remove the DRM from a book, but leave the original file intact, t
 
 The DRM removal process is very similar to that of conversion.  If using the Codex main window, add your files and folders, but use the Remove DRM button instead of Convert.  The value of the output format combo box is ignored.  From a file's shell context menu, choose the Remove DRM option from the Codex submenu.  All other details are the same as for the conversion process, documented above.
 
-##Options
-The Codex Options dialog, accessible from the main window, is fairly straight forward at the moment.  It provides the following:
+##Finding Kindle books for conversion
+One of the primary reasons Codex exists, and indeed the main reason why I created it, is its ability to convert eBooks purchased from Amazon's Kindle Store to any of the output formats listed above.  You can then read the resulting files on any device or in any software of your choice.  To that end, Codex includes two very easy ways to locate your Kindle eBook files once you've downloaded them using the Kindle for PC software.  You can find both of these in the Tools menu, accessible from Codex's main window.
 
+###Find Kindle file from Amazon URL
+If you have the URL to an eBook's product page on the Amazon website, and the corresponding eBook file is on your computer, type or paste in that URL and Codex will quickly find the file and add it to the Files list for conversion.  This is useful if, for instance, you purchased a book a long time ago and don't want to hunt through your entire library for it.  Instead, you can simply search in the Kindle Store and copy the URL.
+
+###Browse downloaded Kindle books
+This option is great for quickly locating the most recent books you've downloaded, as well as for looking through your collection.  A dialog box will pop up, showing a list of books in your Kindle content directory.  For each one, its author, title and filename will be shown.  The books are sorted by last modified date.  Select one or more titles and press Enter to add them to the Files list.
+
+Note: In order to avoid slowing down the Codex user interface, this dialog loads book information in the background.  Therefore, if you find that not all of your books have appeared in the list, it should only take a couple of seconds at most to see them.  Likewise, if you're only interested in a file at or near the top of the list, but you have a large Kindle library, you don't have to wait for information for every book to be retrieved before making your selection.
+
+##Options
+The Codex Options dialog, accessible from the main window, offers the following settings:
+
+###Output
 * Output directory: A setting to control where your processed eBooks are stored, plus a Browse button.
-* Output filename template: A fairly limited option to control how your output files are named.  The default is $author\$title, which tells Codex to store your files in author subdirectories, with their titles as their filenames.  Currently these are the only available tags.
+* Output filename template: An option to control how your output files are named.  The default is $author\$title, which tells Codex to store your files in author subdirectories, with their titles as their filenames.  Currently this is rather limited and these are the only available tags.
 * Default output format: This setting is used when converting from the Codex->Convert option in a Windows Explorer context menu.
+
+###Kindle
+* Kindle content directory: If you've told Kindle for PC to store downloaded books somewhere other than the default, you can set a different location here by typing in the path or using the Browse button.  Codex uses this directory to find your Kindle books.
+
+###Conversion
+* Show conversion complete dialog: If this box is checked, the "Conversion complete" dialog will be shown at the end of all conversion or DRM removal operations.  Otherwise, it will only be shown if errors occur.  The box is checked by default.
+* Remove smart punctuation from converted files: Many commercial eBooks contain curly quotes and other so-called smart punctuation.  If you use a braille display, these symbols can be a distraction or take up multiple cells.  Uncheck this box to have smart punctuation replaced with more standard characters.  This option isn't enabled by default.
+* Replace unicode characters with their ASCII equivalents: This option isn't recommended for most users.
+* Extra options to pass to calibre ebook-convert command: Use this field to pass any extra command line arguments, such as custom search/replace data, to calibre's ebook-convert tool.  A full list of such options is available on [this page](http://manual.calibre-ebook.com/generated/en/ebook-convert.html).  Options shouldn't be enclosed in quotes, but you are responsible for quoting any data within an argument (e.g. strings containing spaces).
 
 ##Help and feedback
 If you have questions, feature suggestions or are experiencing a problem, feel free to get in touch.  There are email and Twitter details on my [home page](http://jscholes.net).  If using Twitter, you will be able to send me direct messages even if I'm not following you, but unless you have the same feature enabled in your Twitter settings, you'll need to follow me if you want a reply.
 
 If you happen to have a GitHub account, filing issue reports there would be most welcome.  The project's URL is [jscholes/codex](http://github.com/jscholes/codex).
 
-When reporting problems, whether it be via Twitter, email or on GitHub, it would be really helpful if you included your Codex log file.  You can find this by:
-
-* Opening the Run dialog (Windows+R)
-* Typing the following:  
-%appdata%\codex2  
-And pressing enter
-* Locating the file codex2.log and copying it to a publically-accessible location e.g. Dropbox and sending me a link (or attaching it to an email)
+When reporting problems, whether it be via Twitter, email or on GitHub, it would be really helpful if you included your Codex log file.  You can find this by selecting "Open Codex configuration directory" from Codex's Help menu.  In the folder that opens, find the file codex2.log and either attach it to an email, include it with your GitHub issue report, or place it in a publically-accessible location and provide a link (e.g. your Dropbox Public folder).
