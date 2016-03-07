@@ -1,6 +1,6 @@
 A few years ago, I wrote a tutorial which guided people through the installation and configuration of software for the purposes of gaining access to books purchased from the Amazon Kindle Store.  The guide proved popular, but it required heavy use of the command line, making it unsuitable and daunting for quite a lot of people, not to mention that it was an absolute nightmare to troubleshoot if anything went wrong.  Which it frequently did.
 
-Subsequently, in 2014, I started to develop a small prototype application to make the process easier and more intuitive, not only for people wanting to read Kindle eBooks, but also for me when people needed help.  I named it Codex, a word used from the 16th century onwards to denote, now ancient, manuscripts in book form.  In the last couple of months, I've finally rewritten that prototype to include the functionality I wanted it to have from the start, and the first release of Codex 2.0 is ready for download.
+Subsequently, in 2014, I started to develop a small prototype application to make the process easier and more intuitive, not only for people wanting to read Kindle eBooks, but also for me when people needed help.  I named it Codex, a word used from the 16th century onwards to denote, now ancient, manuscripts in book form.  In the second half of 2015, I finally rewrote that prototype to include the functionality I wanted it to have from the start, and the software is now publically available to download.
 
 In this guide, I'll show you just how easy it is to gain access to your purchased Kindle eBooks in any software application or on any device of your choice, using Codex.  The application can process eBooks from many other sources, both DRM-protected and not, but access to the Kindle Store, a marvellous resource for blind readers, was my primary goal back in 2012 and that is what it remains to this day.
 
@@ -39,29 +39,12 @@ You'll be taken to a "Thank you" page, on which is a link to open the Kindle sof
 
 Activate this link, and if you're asked about opening a software application, press OK in any of the dialogs that come up.  Kindle for PC will open and download your book.  You'll receive no audible or spoken feedback that the download process has completed, but for most books it shouldn't take longer than a few minutes at most, and usually a lot shorter than that.  The table showing your downloaded books is relatively accessible, so if you wish, you can check to see whether the book appears there.  You can then close Kindle for PC.
 
-Next, open up your Documents folder and find the "My Kindle Content" subdirectory.  This folder contains all of your Kindle downloads, as well as bookmark files and other information that the Kindle software needs.  The files we're interested in have a .azw extension, but unfortunately they're named using their associated Amazon product ID rather than by title.  The best thing to do is to open up the View menu by pressing Alt+V, expanding the Sort by sub menu and choosing Date modified.  The first .azw file in the folder should then be the most recent book downloaded.
+## Converting your purchases
+Next, open up Codex from the desktop, start menu, etc.  In the main window, press Alt+T to open the Tools menu, and then press B for the "Browse downloaded Kindle books" dialog.  You'll see a list of Kindle books, sorted by their file's last modified date.  In other words, ones that you've recently purchased or downloaded will appear first.  Each book will have its author, title and filename listed.
 
-Make sure that you always choose the most recent file with a .azw extension, as Codex can't do anything with any of the other ones.  One of the most important targets on my to-do list is to make this part of the process simpler in a future release.
+At this point, the book you've just purchased should be the very top item in that list, so you can simply press Enter to add it to Codex's Files list for conversion.  Alternatively, you can select any other book of your choice, or hold down Shift  and use the Arrow keys to select multiple books and press Enter to add them all at once.  Then, select your desired output format from the combo-box, and press Convert!
 
-Once you've found the file you want to convert, press your Applications key or Shift+F10 to open the file's context menu, followed by the letter X to expand the Codex sub menu.  Here, you have three options:
-
-- Convert: Will convert the file to the default format specified in the Codex Options dialog
-- Convert to: Offers a menu of supported output formats to choose from
-- Remove DRM: Will strip the protection from the book, but leave the original format in tact
-
-Regardless of which option you choose, the processed file will be placed in your Codex output directory, which by default is Documents\eBooks with books organised into author name-based subfolders.  You'll also have the option of opening the file right from within Codex once it's worked its magic.
-
-> ### Tip
-> You can also find the Codex sub menu in the context menu of folders, meaning you can convert multiple files at once.  Give it a try!
-
-### Note
-If you're using a version of Windows older than Windows 7, Codex will still work, but unfortunately, Windows Explorer integration won't be available.  This is due to changes made by Microsoft in Windows 7 and later.  Until I've implemented a work-around for this, you'll need to use the Codex user interface instead:
-
-- Use the Add files and Add folder buttons in Codex to load the files you want to convert
-- Select your desired output format from the combo box
-- Press either the Convert or Remove DRM button to start the process
-
-You can use the same steps as above to find the appropriate file for conversion.  Once you've pressed the Convert or Remove DRM button, the process is identical from that point forward to that available through Windows Explorer.
+the converted file will be placed in your Codex output directory, which by default is My Documents\eBooks with books organised into author name-based subfolders.  You'll also have the option of opening the file right from within Codex once it's worked its magic.
 
 ## All done!
 If nothing went wrong during the conversion process, you should have an unprotected eBook in the format of your choice which you can open in any software application or copy to any device.  If you have questions that this guide didn't answer, have a read of the Codex documentation which is included with the program and available through the Help menu.  If you still don't have the information you're looking for, or something did go wrong, feel free to get in touch using the contact details available on my home page.

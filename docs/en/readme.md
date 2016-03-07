@@ -82,7 +82,7 @@ One of the most convenient options provided by Codex is the integration with the
     * Convert to: As above, but allows you to select a different output format other than the default
     * Remove DRM: Attempt to strip any DRM protection from the eBook(s), leaving the original format intact
 
-The rest of the process is the same as when converting from the Codex main window.  Please note that currently, you can't select multiple files in Explorer to convert them all at once.  You'll either need to place them in their own folder, add them using the Add files dialog within Codex which does support the selection of multiple files, or convert them one by one.
+The rest of the process is the same as when converting from the Codex main window.  Please note that currently, you can't select multiple files in Explorer to convert them all at once.  You'll either need to place them in their own folder, add them using the Add files dialog within Codex which does support the selection of multiple files, or convert them one by one.  Please also be aware that, due to changes made by Microsoft in Windows 7, shell integration is not currently available on versions of Windows earlier than that.
 
 ##DRM Removal
 If you wish to remove the DRM from a book, but leave the original file intact, this option is for you.  This is useful if you have an Adobe Digital Editions book that's already in ePub, for example.  Converting it from ePub to ePub again would be a waste of time, and would probably result in a book with degraded quality.
