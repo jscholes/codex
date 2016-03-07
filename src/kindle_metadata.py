@@ -15,14 +15,14 @@ class KindleMetadataError(Exception):
 
 
 def get_title_and_author_from_kindle_file(path):
-    with open(path, 'rb') as f:
-        data = f.read()
+    stream = open(path, 'rb')
 
-    if b'TPZ' in data[0:3]:
+    format_header = stream.read(3)
+    if b'TPZ' in format_header:
         raise KindleMetadataError
 
     try:
-        record_zero = get_record(0, data)
+        record_zero = get_record(0, stream)
         exth_header = get_exth_header(record_zero)
         metadata_records = get_metadata_from_exth_header(exth_header)
         if 'title' not in metadata_records.keys():
@@ -32,12 +32,13 @@ def get_title_and_author_from_kindle_file(path):
         raise KindleMetadataError
 
 
-def get_record(record_number, bytes):
+def get_record(record_number, stream):
     record_info_offset = get_record_info_offset(0)
-    record_data_offset = get_record_data_offset(record_info_offset, bytes)
+    record_data_offset = get_record_data_offset(record_info_offset, stream)
     next_record_info_offset = get_record_info_offset(1)
-    next_record_data_offset = get_record_data_offset(next_record_info_offset, bytes)
-    return bytes[record_data_offset:next_record_data_offset]
+    next_record_data_offset = get_record_data_offset(next_record_info_offset, stream)
+    stream.seek(record_data_offset)
+    return stream.read(next_record_data_offset - record_data_offset)
 
 
 def get_record_info_offset(record_number):
@@ -45,8 +46,9 @@ def get_record_info_offset(record_number):
     return record_info_offset
 
 
-def get_record_data_offset(record_info_offset, bytes):
-    record_data_offset = struct.unpack('>i', bytes[record_info_offset:record_info_offset + 4])[0]
+def get_record_data_offset(record_info_offset, stream):
+    stream.seek(record_info_offset)
+    record_data_offset = struct.unpack('>i', stream.read(4))[0]
     return record_data_offset
 
 
