@@ -36,12 +36,17 @@ def add_threading_excepthook(func):
 
     threading.Thread.__init__ = init
 
+def set_debug_logging(flag):
+    if flag:
+        application.logger.setLevel(logging.DEBUG)
+        application.logger.debug('Debug logging enabled')
+    else:
+        application.logger.debug('Debug logging disabled')
+        application.logger.setLevel(logging.INFO)
+
 def setup():
     logger = logging.getLogger(application.internal_name)
-    if application.debug:
-        logger.setLevel(logging.DEBUG)
-    else:
-            logger.setLevel(logging.INFO)
+    logger.setLevel(logging.INFO)
     log_path = os.path.join(application.config_directory, '{0}.log'.format(application.internal_name))
     if os.path.exists(log_path):
         old_log = '{0}.old'.format(log_path)
@@ -58,5 +63,3 @@ def setup():
         sys.excepthook = excepthook
         add_threading_excepthook(excepthook)
 
-    if application.debug:
-        application.logger.debug('Debug logging enabled')

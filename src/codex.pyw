@@ -47,6 +47,7 @@ def main():
     import config
     try:
         config.setup()
+        log.set_debug_logging(application.config['debug'])
     except config.ConfigLoadError:
         wx.MessageBox('Unfortunately, there was a problem loading your configuration settings.  The application will now exit.', 'Configuration Error', wx.ICON_ERROR)
         sys.exit(1)

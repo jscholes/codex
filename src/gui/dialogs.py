@@ -16,6 +16,7 @@ import clipboard
 import conversion
 import kindle_finder
 import kindle_metadata
+import log
 from signals import conversion_started, conversion_error, conversion_complete
 
 import gui.conversion_pipeline
@@ -214,6 +215,7 @@ class OptionsDialog(BaseDialog):
         self.output_options = wx.StaticBox(self.panel, -1, _('Output'))
         self.kindle_options = wx.StaticBox(self.panel, -1, _('Kindle'))
         self.conversion_options = wx.StaticBox(self.panel, -1, _('Conversion'))
+        self.other_options = wx.StaticBox(self.panel, -1, _('Other'))
 
         self.output_directory = create_labelled_field(self.output_options, _('&Output directory'), application.config['output_directory'])
         output_directory_browse_button = create_button(self.output_options, _('&Browse...'), self.onOutputDirectoryBrowse)
@@ -227,6 +229,7 @@ class OptionsDialog(BaseDialog):
         self.remove_smart_punctuation = self.create_checkbox(self.conversion_options, _('&Remove smart punctuation from converted files'), 'remove_smart_punctuation')
         self.asciiize = self.create_checkbox(self.conversion_options, _('Re&place unicode characters with their ASCII equivalents (not recommended)'), 'asciiize')
         self.extra_ebook_convert_options = create_labelled_field(self.conversion_options, _('E&xtra options to pass to calibre ebook-convert command'), application.config['extra_ebook_convert_options'])
+        self.debug = self.create_checkbox(self.other_options, _('&Enable debug logging'), 'debug')
 
         ok_button = wx.Button(self.panel, wx.ID_OK)
         ok_button.SetDefault()
@@ -284,11 +287,14 @@ class OptionsDialog(BaseDialog):
             application.config['remove_smart_punctuation'] = self.remove_smart_punctuation.IsChecked()
             application.config['asciiize'] = self.asciiize.IsChecked()
             application.config['extra_ebook_convert_options'] = self.extra_ebook_convert_options.GetValue()
+            debug = self.debug.IsChecked()
+            application.config['debug'] = debug
             application.main_window.output_formats.SetStringSelection(self.default_output_format.GetStringSelection())
 
             validation_result = application.config.validate(application.config_validator)
             if validation_result == True:
                 application.config.write()
+                log.set_debug_logging(debug)
                 self.EndModal(wx.ID_OK)
             else:
                 wx.MessageBox(_('There was a problem saving your configuration.'), _('Error'), wx.ICON_ERROR, parent=self)
