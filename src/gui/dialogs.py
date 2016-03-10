@@ -269,14 +269,10 @@ class OptionsDialog(BaseDialog):
             wx.MessageBox(_('The output directory you\'ve chosen is not a folder!'), _('Error'), wx.ICON_ERROR, parent=self)
 
         kindle_content_directory = os.path.expandvars(self.kindle_content_directory.GetValue())
-        if os.path.exists(kindle_content_directory) and os.path.isdir(kindle_content_directory):
-            should_save = True
-        elif not os.path.exists(kindle_content_directory):
-            wx.MessageBox(_('The Kindle content directory you\'ve chosen doesn\'t exist.'), _('Error'), wx.ICON_ERROR, parent=self)
-            should_save = False
+        if not os.path.exists(kindle_content_directory):
+            wx.MessageBox(_('The Kindle content directory you\'ve chosen doesn\'t exist.'), _('Warning'), wx.ICON_INFORMATION, parent=self)
         elif not os.path.isdir(kindle_content_directory):
-            wx.MessageBox(_('The Kindle content directory you\'ve chosen is not a folder!'), _('Error'), wx.ICON_ERROR, parent=self)
-            should_save = False
+            wx.MessageBox(_('The Kindle content directory you\'ve chosen is not a folder.'), _('Warning'), wx.ICON_INFORMATION, parent=self)
 
         if should_save:
             application.config['output_directory'] = output_directory
