@@ -147,25 +147,13 @@ class BaseCommand(object):
         self.command_args.insert(0, self.executable)
         try:
             self.buffer = tempfile.NamedTemporaryFile(dir=calibre_temp_path)
-            application.logger.debug('Running command: {0}'.format(self.format_args(self.command_args)))
+            application.logger.debug('Running command: {0}'.format(subprocess.list2cmdline(self.command_args)))
             si = subprocess.STARTUPINFO()
             si.dwFlags = subprocess.STARTF_USESHOWWINDOW
             si.wShowWindow = subprocess.SW_HIDE
             self.process = subprocess.Popen(self.command_args, stdout=self.buffer, stderr=subprocess.STDOUT, startupinfo=si)
         except WindowsError:
             raise ExecutableNotFoundError
-
-    def format_args(self, args):
-        formatted_args = ''
-        for arg in args:
-            if not isinstance(arg, str):
-                arg = arg.decode('utf-8')
-            if ':\\' in arg:
-                formatted_args += ' "{0}"'.format(arg)
-            else:
-                formatted_args += ' {0}'.format(arg)
-
-        return formatted_args.lstrip()
 
     def log_error(self):
         application.logger.error('Error while running command: {0}\nReturn code: {1}\n{2}'.format(self.format_args(self.command_args), self.return_code, self.stdout))
