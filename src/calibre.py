@@ -156,7 +156,7 @@ class BaseCommand(object):
             raise ExecutableNotFoundError
 
     def log_error(self):
-        application.logger.error('Error while running command: {0}\nReturn code: {1}\n{2}'.format(self.format_args(self.command_args), self.return_code, self.stdout))
+        application.logger.error('Error while running command: {0}\nReturn code: {1}\n{2}'.format(subprocess.list2cmdline(self.command_args), self.return_code, self.stdout))
 
     def cancel(self):
         self.process.kill()
