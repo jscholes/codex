@@ -58,7 +58,7 @@ stop_conversion = threading.Event()
 skip_current_file = threading.Event()
 
 def filetype_not_supported(path):
-    return os.path.splitext(path)[1].lstrip('.') not in input_formats
+    return os.path.splitext(path)[1].lstrip('.').lower() not in input_formats
 
 def add_path(path):
     if path in [book.input_path for book in conversion_queue]:
