@@ -122,7 +122,7 @@ setup(
             'excludes': [
                           '_ssl', 'calendar', 'difflib', 'doctest', 'email',
                           'mimetypes', 'optparse', 'pdb', 'plistlib',
-                          'pydoc', 'quopri', 'ssl', 'win32com.gen_py',
+                          'pydoc', 'quopri', 'ssl',
             ],
             'optimize': 2,
         },

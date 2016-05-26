@@ -22,6 +22,11 @@ def get_screen_reader_outputs():
     return sr_outputs
 
 def setup():
+    import win32com.client
+    if win32com.client.gencache.is_readonly == True:
+        win32com.client.gencache.is_readonly = False
+        win32com.client.gencache.Rebuild()
+
     # We don't want SAPI5 or PC Talker output, only screen reader
     sr_outputs = get_screen_reader_outputs()
     speaker = outputs.auto.Auto()
