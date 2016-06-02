@@ -7,6 +7,10 @@ from accessible_output2 import outputs
 
 import application
 
+class DummySpeaker(object):
+    def speak(self, *args, **kwargs):
+        pass
+
 def get_screen_reader_outputs():
     available_outputs = ao.get_output_classes()
     sr_outputs = []
@@ -16,17 +20,13 @@ def get_screen_reader_outputs():
             # output.name doesn't seem to be defined for all output classes
             if output.__name__ not in system_outputs:
                 sr_outputs.append(output())
-        except outputs.base.OutputError:
+        except (outputs.base.OutputError, AttributeError, KeyError):
+            application.logger.exception('Exception while setting up speech output')
             pass
 
     return sr_outputs
 
 def setup():
-    import win32com.client
-    if win32com.client.gencache.is_readonly == True:
-        win32com.client.gencache.is_readonly = False
-        win32com.client.gencache.Rebuild()
-
     # We don't want SAPI5 or PC Talker output, only screen reader
     sr_outputs = get_screen_reader_outputs()
     speaker = outputs.auto.Auto()

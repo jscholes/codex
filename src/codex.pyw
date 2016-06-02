@@ -75,8 +75,13 @@ def main():
         wx.MessageBox(_('Unfortunately, there was a problem initialising the configuration settings for Calibre, the tool Codex uses for eBook conversion and DRM removal.'), _('Configuration Error'), wx.ICON_ERROR)
         sys.exit(1)
 
-    import speech
-    speech.setup()
+    try:
+        import speech
+        speech.setup()
+    except Exception:
+        application.logger.exception('Problem during speech setup.')
+        if not hasattr(application, 'speaker'):
+            application.speaker = speech.DummySpeaker()
 
     if len(sys.argv) > 1:
         process_command_line()
