@@ -364,10 +364,17 @@ class BrowseKindleBooksDialog(BaseDialog):
             try:
                 full_path = os.path.join(application.config['kindle_content_directory'], file)
                 metadata = kindle_metadata.get_title_and_author_from_kindle_file(full_path)
-                metadata['author'] = ' '.join(metadata['author'].split(', ')[::-1])
             except kindle_metadata.KindleMetadataError:
                 metadata = {'author': _('Unknown Author'), 'title': _('Unknown Title')}
-            wx.CallAfter(self.books_list.Append, '{0} - {1} ({2})'.format(metadata['author'], metadata['title'], file), full_path)
+            try:
+                author = ' '.join(metadata['author'].split(', ')[::-1])
+            except KeyError:
+                author = _('Unknown Author')
+            try:
+                title = metadata['title']
+            except KeyError:
+                title = _('Unknown Title')
+            wx.CallAfter(self.books_list.Append, '{0} - {1} ({2})'.format(author, title, file), full_path)
             if not self.item_has_focus:
                 wx.CallAfter(self.books_list.SetSelection, 0)
                 self.item_has_focus = True
