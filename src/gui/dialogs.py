@@ -138,10 +138,8 @@ class ConversionCompleteDialog(BaseDialog):
 
         try:
             clipboard.put_files_on_clipboard(book_paths)
-            books_copied = len(book_paths)
-            application.speaker.speak(__('Copied {0} book to clipboard', 'Copied {0} books to clipboard', books_copied).format(books_copied))
         except clipboard.SetClipboardDataError:
-            application.speaker.speak(_('Error copying books to clipboard'))
+            wx.Bell()
 
     def setup_layout(self):
         if len(conversion.converted_files) > 0:
@@ -378,9 +376,6 @@ class BrowseKindleBooksDialog(BaseDialog):
             if not self.item_has_focus:
                 wx.CallAfter(self.books_list.SetSelection, 0)
                 self.item_has_focus = True
-
-        loaded_files = len(self.files)
-        application.speaker.speak(__('Found {0} Kindle book', 'Found {0} Kindle books', loaded_files).format(loaded_files))
 
     def onBooksListSelectionChange(self, event):
         is_selection = event.GetExtraLong()
