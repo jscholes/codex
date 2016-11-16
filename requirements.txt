@@ -2,6 +2,3 @@ configobj
 validator
 blinker
 markdown
-hg+http://hg.q-continuum.net/libloader
-hg+http://hg.q-continuum.net/platform_utils
-hg+http://hg.q-continuum.net/accessible_output2
