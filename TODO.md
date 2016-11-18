@@ -1,4 +1,7 @@
-- Don't convert if input and output filetypes are the same
-Find Kindle eBook file by Amazon URL
-- Better detection for filetypes with no or mismatched titles
-- Allow copying of books from Explorer into the Files list
+- Plan a new design and refactor the application to rely much less on global state
+- Add an IPC mechanism to support conversion of multiple selected files from Explorer
+- Add a Windows service to monitor the Kindle content directory for new files and automatically convert them
+- Add ZIP file support for collections of books
+- Only convert if input and output filetypes are different
+- When converting text files or other filetypes without metadata, allow the user to specify the author/title or a filename pattern themselves
+- Allow the user to specify a command that will be ran after conversion is complete
