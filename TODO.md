@@ -1,4 +1,6 @@
 - Plan a new design and refactor the application to rely much less on global state
+- Allow selecting multiple, non-sequential files in the "browse Kindle books" dialog
+- Add an author/title filter and type-ahead to the "browse Kindle books" dialog
 - Add an IPC mechanism to support conversion of multiple selected files from Explorer
 - Add a Windows service to monitor the Kindle content directory for new files and automatically convert them
 - Add ZIP file support for collections of books
