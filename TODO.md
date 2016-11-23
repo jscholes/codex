@@ -1,7 +1,10 @@
 - Plan a new design and refactor the application to rely much less on global state
+- Clarrify the fact that removing the DRM from books without it will helpfully organise them - consider renaming the facility to import or similar
+- Add translations
 - Allow selecting multiple, non-sequential files in the "browse Kindle books" dialog
 - Add an author/title filter and type-ahead to the "browse Kindle books" dialog
 - Add an IPC mechanism to support conversion of multiple selected files from Explorer
+- Add large folders to the file list in the background
 - Add a Windows service to monitor the Kindle content directory for new files and automatically convert them
 - Add ZIP file support for collections of books
 - Only convert if input and output filetypes are different
