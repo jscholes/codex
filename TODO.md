@@ -1,3 +1,4 @@
+- Ensure that when people update to the version which supports KFX, their calibre installations and configs are force-refreshed
 - Plan a new design and refactor the application to rely much less on global state
 - Add a portable mode
 - Clarrify the fact that removing the DRM from books without it will helpfully organise them - consider renaming the facility to import or similar
@@ -12,3 +13,4 @@
 - When converting text files or other filetypes without metadata, allow the user to specify the author/title or a filename pattern themselves
 - Allow the user to specify a command that will be ran after conversion is complete
 - Tighten up long filename behaviour
+- Add a $filename template variable or an option to allow use of the original filename
