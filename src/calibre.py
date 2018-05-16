@@ -40,6 +40,7 @@ book_id_re = re.compile(r'\nAdded book ids: ([0-9]+)\n')
 drm_removal_error = 'Ultimately failed to decrypt'
 invalid_option_error = 'error: no such option'
 no_drm = 'DRM free perhaps?'
+kfx_plugin_filename = 'KFX Input.zip'
 # Qt outputs a warning to stdout if we're on Windows 10
 qt_warnings = [
     'Qt: Untested Windows version 10.0 detected!\n',
@@ -57,6 +58,7 @@ calibre_temp_path = os.path.join(application.config_directory, 'calibre_temp')
 calibre_cache_path = os.path.join(application.config_directory, 'calibre_cache')
 calibre_database_path = os.path.join(calibre_library_path, 'metadata.db')
 dedrm_plugin_path = os.path.join(calibre_base_path, 'DeDRM_plugin.zip')
+kfx_plugin_path = os.path.join(calibre_base_path, kfx_plugin_filename)
 
 calibre_paths = [
     {'base': 'calibre_config', 'path': calibre_config_path},
@@ -110,6 +112,8 @@ def setup():
     set_calibre_environment_variables()
     if not os.path.exists(os.path.join(calibre_config_path, 'plugins', 'DeDRM')):
         CalibreCustomizeAddPlugin(dedrm_plugin_path)
+    if not os.path.exists(os.path.join(calibre_config_path, 'plugins', kfx_plugin_filename)):
+        CalibreCustomizeAddPlugin(kfx_plugin_path)
 
 def calibre_executable_path(name):
     return os.path.join(calibre_path, '{0}.exe'.format(name))
