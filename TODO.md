@@ -1,3 +1,4 @@
+- Replace empty metadata.db with a version updated to calibre database format v23
 - Ensure that when people update to the version which supports KFX, their calibre installations and configs are force-refreshed
 - Plan a new design and refactor the application to rely much less on global state
 - Add a portable mode
