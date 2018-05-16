@@ -34,7 +34,7 @@ class FiletypeNotSupportedError(Exception):
 class FileNotFoundError(Exception):
     pass
 
-input_formats = ['azw', 'azw3', 'azw4', 'cbc', 'cbr', 'cbz', 'chm', 'djvu', 'docx', 'epub', 'fb2', 'html', 'htmlz', 'lit', 'lrf', 'mobi', 'odt', 'pdb', 'pdf', 'pml', 'prc', 'rb', 'rtf', 'snb', 'tcr', 'txt', 'txtz']
+input_formats = ['azw', 'azw3', 'azw4', 'azw8', 'cbc', 'cbr', 'cbz', 'chm', 'djvu', 'docx', 'epub', 'fb2', 'html', 'htmlz', 'kfx', 'kfx-zip', 'kpf', 'lit', 'lrf', 'mobi', 'odt', 'pdb', 'pdf', 'pml', 'prc', 'rb', 'rtf', 'snb', 'tcr', 'txt', 'txtz']
 untitled_formats = ['txt', 'txtz']
 input_wildcards = ';'.join(['*.{0}'.format(format) for format in input_formats])
 
