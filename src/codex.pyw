@@ -7,7 +7,6 @@ import os
 import sys
 import time
 
-import accessible_output2 as ao
 import wx
 
 import application
