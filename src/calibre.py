@@ -202,7 +202,7 @@ class CalibredbAdd(BaseCommand):
     def __init__(self, path, *args, **kwargs):
         self.executable = calibre_executable_path('calibredb')
         self.path = path
-        self.command_args = ['add', '--library-path', calibre_library_path, '--dont-notify-gui', '--duplicates', self.path]
+        self.command_args = ['add', '--library-path', calibre_library_path, '--duplicates', self.path]
         super(CalibredbAdd, self).__init__(*args, **kwargs)
 
     def _process_output(self):
