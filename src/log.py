@@ -52,7 +52,7 @@ def setup():
         old_log = '{0}.old'.format(log_path)
         try:
             os.remove(old_log)
-        except OSError as WindowsError:
+        except OSError:
             pass
         os.rename(log_path, '{0}.old'.format(log_path))
     log_file = logging.FileHandler(log_path, mode='w', encoding='utf-8')
