@@ -39,7 +39,6 @@ def main():
     import log
     log.setup()
     logger = application.logger
-    logger.info('Starting application: {0}'.format(application.title))
     logger.info('Application version: {0}'.format(application.version))
     logger.info('Application directory: {0}'.format(application.application_path))
     logger.info('Application config directory: {0}'.format(application.config_directory))
