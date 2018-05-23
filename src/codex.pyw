@@ -27,6 +27,7 @@ def process_command_line():
 
 
 def main():
+    start = time.time()
     application.wx_app = wx.App(False)
     single_instance_checker = wx.SingleInstanceChecker()
     if single_instance_checker.IsAnotherRunning():
@@ -79,6 +80,8 @@ def main():
 
     import gui
     gui.setup()
+    initialised = time.time() - start
+    logger.info(f'Initialised in {initialised:.4f} seconds')
     application.wx_app.MainLoop()
 
 if __name__ == '__main__':
