@@ -32,9 +32,7 @@ def setup():
     except ConfigObjError:
         application.logger.critical('Error loading config from: {0}'.format(application.config_file), exc_info=sys.exc_info())
         raise ConfigLoadError
-        return
     application.config_validator = Validator()
-    config.validate(application.config_validator, copy=True)
-    config.write()
+    validated = config.validate(application.config_validator, copy=True)
     application.config = config
     application.logger.info('Loaded configuration file: {0}'.format(application.config_file))

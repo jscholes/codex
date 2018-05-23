@@ -139,7 +139,6 @@ class MainWindow(sc.SizedFrame):
             selected_paths = file_dialog.GetPaths()
             conversion_pipeline.add_paths(selected_paths, parent=self)
             application.config['working_directory'] = os.path.split(file_dialog.GetPath())[0]
-            application.config.write()
             self.files_list.SetFocus()
 
     def onAddFolder(self, event):
@@ -149,7 +148,6 @@ class MainWindow(sc.SizedFrame):
         if result == wx.ID_OK:
             conversion_pipeline.add_paths(paths.walk_directory_tree(folder_dialog.GetPath()), parent=self, from_folder=True)
             application.config['working_directory'] = os.path.split(folder_dialog.GetPath())[0]
-            application.config.write()
             self.files_list.SetFocus()
 
     def onRemoveFile(self, event):

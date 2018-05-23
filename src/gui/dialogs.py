@@ -287,7 +287,6 @@ class OptionsDialog(BaseDialog):
 
             validation_result = application.config.validate(application.config_validator)
             if validation_result == True:
-                application.config.write()
                 log.set_debug_logging(debug)
                 self.EndModal(wx.ID_OK)
             else:

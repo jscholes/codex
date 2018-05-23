@@ -65,7 +65,6 @@ def main():
         else:
             wx.MessageBox(_('Unfortunately, Windows Explorer integration is not currently supported on this version of Windows.'), _('Shell Integration Error'), wx.ICON_ERROR)
             application.config['shell_integration_not_supported'] = True
-            application.config.write()
 
     import calibre
     try:
@@ -82,6 +81,7 @@ def main():
     initialised = time.time() - start
     logger.info(f'Initialised in {initialised:.4f} seconds')
     application.wx_app.MainLoop()
+    application.config.write()
 
 if __name__ == '__main__':
     main()

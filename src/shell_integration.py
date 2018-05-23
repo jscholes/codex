@@ -115,7 +115,6 @@ def setup():
             integrate()
             try:
                 application.config.pop('shell_integration_not_supported')
-                application.config.write()
             except KeyError:
                 pass
         else:
