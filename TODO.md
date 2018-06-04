@@ -1,17 +1,18 @@
-- Replace empty metadata.db with a version updated to calibre database format v23
+- Allow a config directory to be provided on the command line for testing
+- Create a portable mode without Windows Explorer integration
 - Ensure that when people update to the version which supports KFX, their calibre installations and configs are force-refreshed
+- Ensure Browse Kindle Books dialog can show KFX books
+- Tighten up long filename behaviour
+- Add an IPC mechanism to support conversion of multiple selected files from Explorer
 - Plan a new design and refactor the application to rely much less on global state
-- Add a portable mode
 - Clarrify the fact that removing the DRM from books without it will helpfully organise them - consider renaming the facility to import or similar
 - Add translations
 - Allow selecting multiple, non-sequential files in the "browse Kindle books" dialog
 - Add an author/title filter and type-ahead to the "browse Kindle books" dialog
-- Add an IPC mechanism to support conversion of multiple selected files from Explorer
 - Add large folders to the file list in the background
 - Add a Windows service to monitor the Kindle content directory for new files and automatically convert them
 - Add ZIP file support for collections of books
 - Only convert if input and output filetypes are different
 - When converting text files or other filetypes without metadata, allow the user to specify the author/title or a filename pattern themselves
 - Allow the user to specify a command that will be ran after conversion is complete
-- Tighten up long filename behaviour
 - Add a $filename template variable or an option to allow use of the original filename
