@@ -4,6 +4,7 @@
 - Ensure Browse Kindle Books dialog can show KFX books
 - Tighten up long filename behaviour
 - Add an IPC mechanism to support conversion of multiple selected files from Explorer
+- Allow calibre and plug-ins to be updated inside the application
 - Plan a new design and refactor the application to rely much less on global state
 - Clarrify the fact that removing the DRM from books without it will helpfully organise them - consider renaming the facility to import or similar
 - Add translations
