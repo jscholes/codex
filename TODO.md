@@ -1,3 +1,4 @@
+- Handle changes to the user's documents folder location
 - Allow a config directory to be provided on the command line for testing
 - Create a portable mode without Windows Explorer integration
 - Ensure that when people update to the version which supports KFX, their calibre installations and configs are force-refreshed
