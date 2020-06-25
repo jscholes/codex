@@ -1,5 +1,5 @@
 configobj
-git+https://github.com/wilhelm-murdoch/validator
+validator
 blinker
 markdown
 wxpython
