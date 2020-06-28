@@ -89,8 +89,6 @@ class MainWindow(sc.SizedFrame):
         convert_button = create_button(main_buttons_panel, _('&Convert'), self.onConvert, wx.ID_CONVERT)
         remove_drm_button = create_button(main_buttons_panel, _('Remove &DRM'), self.onRemoveDRM, wx.ID_CONVERT)
         options_button = create_button(main_buttons_panel, _('O&ptions'), self.onOptions, id=wx.ID_PREFERENCES)
-        if not application.is_frozen:
-            calibre_environment_button = create_button(main_buttons_panel, '&Launch Calibre environment', self.onCalibreEnvironment)
         exit_button = create_button(main_buttons_panel, _('E&xit'), self.onExit, id=wx.ID_EXIT)
 
     def create_menus(self):
@@ -107,6 +105,9 @@ class MainWindow(sc.SizedFrame):
         self.Bind(wx.EVT_MENU, self.onFindBookFromUrl, find_book_from_url)
         browse_kindle_books = tools_menu.Append(wx.NewId(), _('&Browse downloaded Kindle books...'))
         self.Bind(wx.EVT_MENU, self.onBrowseKindleBooks, browse_kindle_books)
+        if not application.is_frozen:
+            calibre_environment = tools_menu.Append(wx.NewId(), _('&Launch Calibre environment'))
+            self.Bind(wx.EVT_MENU, self.onCalibreEnvironment, calibre_environment)
         return tools_menu
 
     def create_help_menu(self):
