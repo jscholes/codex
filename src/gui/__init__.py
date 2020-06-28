@@ -82,14 +82,16 @@ class MainWindow(sc.SizedFrame):
         self.remove_file_button = create_button(files_list_buttons_panel, _('&Remove file'), self.onRemoveFile)
         self.remove_file_button.Hide()
 
-        main_buttons_panel = sc.SizedPanel(main_panel)
-        main_buttons_panel.SetSizerType('horizontal')
+        self.main_buttons_panel = sc.SizedPanel(main_panel)
+        self.main_buttons_panel.SetSizerType('horizontal')
+        self.main_buttons_panel.Disable()
 
-        self.output_formats = get_output_format_choices(main_buttons_panel, _('O&utput format'))
+        self.output_formats = get_output_format_choices(self.main_buttons_panel, _('O&utput format'))
+        self.output_formats.Disable()
 
-        self.convert_button = create_button(main_buttons_panel, _('&Convert'), self.onConvert, wx.ID_CONVERT)
+        self.convert_button = create_button(self.main_buttons_panel, _('&Convert'), self.onConvert, wx.ID_CONVERT)
         self.convert_button.Disable()
-        self.remove_drm_button = create_button(main_buttons_panel, _('Remove &DRM'), self.onRemoveDRM, wx.ID_CONVERT)
+        self.remove_drm_button = create_button(self.main_buttons_panel, _('Remove &DRM'), self.onRemoveDRM, wx.ID_CONVERT)
         self.remove_drm_button.Disable()
 
     def create_menus(self):
@@ -146,6 +148,8 @@ class MainWindow(sc.SizedFrame):
     def reset(self):
         self.convert_button.Disable()
         self.remove_drm_button.Disable()
+        self.main_buttons_panel.Disable()
+        self.output_formats.Disable()
         self.files_list.Clear()
         self.files_list.SetFocus()
 
@@ -178,7 +182,8 @@ class MainWindow(sc.SizedFrame):
             if self.files_list.GetCount() != 0:
                 self.convert_button.Enable()
                 self.remove_drm_button.Enable()
-
+                self.main_buttons_panel.Enable()
+                self.output_formats.Enable()
 
     def onAddDirectory(self, event):
         folder_dialog = wx.DirDialog(self, message=_('Please select the folder to be added'), defaultPath=application.config['working_directory'], style=wx.DD_DEFAULT_STYLE|wx.DD_DIR_MUST_EXIST)
