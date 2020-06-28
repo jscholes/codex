@@ -88,16 +88,24 @@ class MainWindow(sc.SizedFrame):
 
         convert_button = create_button(main_buttons_panel, _('&Convert'), self.onConvert, wx.ID_CONVERT)
         remove_drm_button = create_button(main_buttons_panel, _('Remove &DRM'), self.onRemoveDRM, wx.ID_CONVERT)
-        options_button = create_button(main_buttons_panel, _('O&ptions'), self.onOptions, id=wx.ID_PREFERENCES)
-        exit_button = create_button(main_buttons_panel, _('E&xit'), self.onExit, id=wx.ID_EXIT)
 
     def create_menus(self):
+        file_menu = self.create_file_menu()
         tools_menu = self.create_tools_menu()
         help_menu = self.create_help_menu()
         menu_bar = wx.MenuBar()
+        menu_bar.Append(file_menu, _('&File'))
         menu_bar.Append(tools_menu, _('&Tools'))
         menu_bar.Append(help_menu, _('&Help'))
         self.SetMenuBar(menu_bar)
+
+    def create_file_menu(self):
+        file_menu = wx.Menu()
+        options = file_menu.Append(wx.ID_PREFERENCES, _('&Options...\tCtrl+P'))
+        self.Bind(wx.EVT_MENU, self.onOptions, options)
+        exit = file_menu.Append(wx.ID_EXIT, _('&Exit\tAlt+F4'))
+        self.Bind(wx.EVT_MENU, self.onExit, exit)
+        return file_menu
 
     def create_tools_menu(self):
         tools_menu = wx.Menu()
