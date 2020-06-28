@@ -67,7 +67,7 @@ class MainWindow(sc.SizedFrame):
         main_panel = self.GetContentsPane()
         main_panel.SetSizerType('vertical')
 
-        files_list_label = wx.StaticText(main_panel, label=_('&Files'))
+        files_list_label = wx.StaticText(main_panel, label=_('Files'))
         self.files_list = wx.ListBox(main_panel, style=wx.LB_NEEDED_SB)
         self.files_list.SetSizerProps(expand=True, proportion=1)
         self.files_list.Bind(wx.EVT_CHAR, self.onFilesListKeyPressed)
@@ -84,7 +84,7 @@ class MainWindow(sc.SizedFrame):
         main_buttons_panel = sc.SizedPanel(main_panel)
         main_buttons_panel.SetSizerType('horizontal')
 
-        self.output_formats = get_output_format_choices(main_buttons_panel, _('Output &format'))
+        self.output_formats = get_output_format_choices(main_buttons_panel, _('O&utput format'))
 
         convert_button = create_button(main_buttons_panel, _('&Convert'), self.onConvert, wx.ID_CONVERT)
         remove_drm_button = create_button(main_buttons_panel, _('Remove &DRM'), self.onRemoveDRM, wx.ID_CONVERT)
