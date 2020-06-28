@@ -1,5 +1,5 @@
 # Codex
-# Copyright (C) 2015 James Scholes
+# Copyright (C) 2020 James Scholes
 # This program is free software, licensed under the terms of the GNU General Public License (version 3 or later).
 # See the file LICENSE.txt for more details.
 import os.path
@@ -20,13 +20,13 @@ from . import conversion_pipeline
 from . import dialogs
 from .utils import create_button, create_labelled_field, get_output_format_choices
 
+
 class MainWindow(sc.SizedFrame):
     def __init__(self, *args, **kwargs):
         super(MainWindow, self).__init__(None, -1, _(application.title), size=(800, 600), style=wx.DEFAULT_FRAME_STYLE, *args, **kwargs)
         self.Centre()
         self.setup_layout()
-        self.setup_tools_menu()
-        self.setup_help_menu()
+        self.create_menus()
 
     def open_readme(self):
         if not application.is_frozen:
@@ -91,27 +91,35 @@ class MainWindow(sc.SizedFrame):
         options_button = create_button(main_buttons_panel, _('O&ptions'), self.onOptions, id=wx.ID_PREFERENCES)
         if not application.is_frozen:
             calibre_environment_button = create_button(main_buttons_panel, '&Launch Calibre environment', self.onCalibreEnvironment)
-        self.tools_button = create_button(main_buttons_panel, _('&Tools'), self.onTools)
-        self.help_button = create_button(main_buttons_panel, _('&Help'), self.onHelp, wx.ID_HELP)
         exit_button = create_button(main_buttons_panel, _('E&xit'), self.onExit, id=wx.ID_EXIT)
 
-    def setup_tools_menu(self):
-        self.tools_menu = wx.Menu()
-        find_book_from_url = self.tools_menu.Append(wx.NewId(), _('&Find Kindle file from Amazon URL'))
-        self.Bind(wx.EVT_MENU, self.onFindBookFromUrl, find_book_from_url)
-        browse_kindle_books = self.tools_menu.Append(wx.NewId(), _('&Browse downloaded Kindle books'))
-        self.Bind(wx.EVT_MENU, self.onBrowseKindleBooks, browse_kindle_books)
+    def create_menus(self):
+        tools_menu = self.create_tools_menu()
+        help_menu = self.create_help_menu()
+        menu_bar = wx.MenuBar()
+        menu_bar.Append(tools_menu, _('&Tools'))
+        menu_bar.Append(help_menu, _('&Help'))
+        self.SetMenuBar(menu_bar)
 
-    def setup_help_menu(self):
-        self.help_menu = wx.Menu()
-        help_menu_documentation = self.help_menu.Append(wx.NewId(), _('&Documentation'))
+    def create_tools_menu(self):
+        tools_menu = wx.Menu()
+        find_book_from_url = tools_menu.Append(wx.NewId(), _('&Find Kindle file from Amazon URL...'))
+        self.Bind(wx.EVT_MENU, self.onFindBookFromUrl, find_book_from_url)
+        browse_kindle_books = tools_menu.Append(wx.NewId(), _('&Browse downloaded Kindle books...'))
+        self.Bind(wx.EVT_MENU, self.onBrowseKindleBooks, browse_kindle_books)
+        return tools_menu
+
+    def create_help_menu(self):
+        help_menu = wx.Menu()
+        help_menu_documentation = help_menu.Append(wx.NewId(), _('&Documentation'))
         self.Bind(wx.EVT_MENU, self.onDocumentation, help_menu_documentation)
-        help_menu_home_page = self.help_menu.Append(wx.NewId(), _('&Codex home page'))
+        help_menu_home_page = help_menu.Append(wx.NewId(), _('&Codex home page'))
         self.Bind(wx.EVT_MENU, self.onHomePage, help_menu_home_page)
-        help_menu_open_config_directory = self.help_menu.Append(wx.NewId(), _('&Open Codex configuration directory'))
+        help_menu_open_config_directory = help_menu.Append(wx.NewId(), _('&Open Codex configuration directory'))
         self.Bind(wx.EVT_MENU, self.onOpenConfigDirectory, help_menu_open_config_directory)
-        help_menu_about = self.help_menu.Append(wx.ID_ABOUT, _('&About'))
+        help_menu_about = help_menu.Append(wx.ID_ABOUT, _('&About...'))
         self.Bind(wx.EVT_MENU, self.onAbout, help_menu_about)
+        return help_menu
 
     def reset(self):
         self.files_list.Clear()
@@ -172,12 +180,6 @@ class MainWindow(sc.SizedFrame):
     def onCalibreEnvironment(self, event):
         calibre.setup()
         subprocess.Popen(['cmd.exe'], cwd=calibre.calibre_path, creationflags=subprocess.CREATE_NEW_CONSOLE)
-
-    def onTools(self, event):
-        self.PopupMenu(self.tools_menu, self.help_button.GetScreenPosition())
-
-    def onHelp(self, event):
-        self.PopupMenu(self.help_menu, self.help_button.GetScreenPosition())
 
     def onFindBookFromUrl(self, event):
         find_dialog = dialogs.FindBookFromURLDialog(self)
