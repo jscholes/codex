@@ -76,8 +76,7 @@ class MainWindow(sc.SizedFrame):
         files_list_buttons_panel = sc.SizedPanel(main_panel)
         files_list_buttons_panel.SetSizerType('horizontal')
 
-        add_files_button = create_button(files_list_buttons_panel, _('Add f&iles...'), self.onAddFiles)
-        add_folder_button = create_button(files_list_buttons_panel, _('Add f&older...'), self.onAddDirectory)
+        self.add_button = create_button(files_list_buttons_panel, _('&Add'), self.onAdd)
         self.remove_file_button = create_button(files_list_buttons_panel, _('&Remove file'), self.onRemoveFile)
         self.remove_file_button.Hide()
 
@@ -98,6 +97,11 @@ class MainWindow(sc.SizedFrame):
         menu_bar.Append(tools_menu, _('&Tools'))
         menu_bar.Append(help_menu, _('&Help'))
         self.SetMenuBar(menu_bar)
+        self.add_menu = wx.Menu()
+        add_files = self.add_menu.Append(wx.ID_OPEN, _('Add f&iles...\tCtrl+O'))
+        self.Bind(wx.EVT_MENU, self.onAddFiles, add_files)
+        add_directory = self.add_menu.Append(wx.NewId(), _('Add &directory...\tCtrl+D'))
+        self.Bind(wx.EVT_MENU, self.onAddDirectory, add_directory)
 
     def create_file_menu(self):
         file_menu = wx.Menu()
@@ -152,6 +156,9 @@ class MainWindow(sc.SizedFrame):
             self.remove_file_button.Show()
         else:
             event.Skip()
+
+    def onAdd(self, event):
+        self.PopupMenu(self.add_menu, self.add_button.GetScreenPosition())
 
     def onAddFiles(self, event):
         file_dialog = wx.FileDialog(self, message=_('Please select the file(s) to be added'), defaultDir=application.config['working_directory'], wildcard=_('All supported files|{0}|All files|{1}').format(conversion.input_wildcards, '*.*'), style=wx.FD_OPEN|wx.FD_FILE_MUST_EXIST|wx.FD_MULTIPLE)
