@@ -1,5 +1,5 @@
 # Codex
-# Copyright (C) 2015 James Scholes
+# Copyright (C) 2020 James Scholes
 # This program is free software, licensed under the terms of the GNU General Public License (version 3 or later).
 # See the file LICENSE.txt for more details.
 import os.path
@@ -20,13 +20,13 @@ from . import conversion_pipeline
 from . import dialogs
 from .utils import create_button, create_labelled_field, get_output_format_choices
 
+
 class MainWindow(sc.SizedFrame):
     def __init__(self, *args, **kwargs):
         super(MainWindow, self).__init__(None, -1, _(application.title), size=(800, 600), style=wx.DEFAULT_FRAME_STYLE, *args, **kwargs)
         self.Centre()
         self.setup_layout()
-        self.setup_tools_menu()
-        self.setup_help_menu()
+        self.create_menus()
 
     def open_readme(self):
         if not application.is_frozen:
@@ -53,6 +53,8 @@ class MainWindow(sc.SizedFrame):
                     else:
                         next_item_index = selected_item
                     self.files_list.SetSelection(next_item_index)
+                else:
+                    self.reset()
             except wx.PyAssertionError:
                 pass
 
@@ -67,7 +69,7 @@ class MainWindow(sc.SizedFrame):
         main_panel = self.GetContentsPane()
         main_panel.SetSizerType('vertical')
 
-        files_list_label = wx.StaticText(main_panel, label=_('&Files'))
+        files_list_label = wx.StaticText(main_panel, label=_('Files'))
         self.files_list = wx.ListBox(main_panel, style=wx.LB_NEEDED_SB)
         self.files_list.SetSizerProps(expand=True, proportion=1)
         self.files_list.Bind(wx.EVT_CHAR, self.onFilesListKeyPressed)
@@ -76,44 +78,79 @@ class MainWindow(sc.SizedFrame):
         files_list_buttons_panel = sc.SizedPanel(main_panel)
         files_list_buttons_panel.SetSizerType('horizontal')
 
-        add_files_button = create_button(files_list_buttons_panel, _('Add f&iles...'), self.onAddFiles)
-        add_folder_button = create_button(files_list_buttons_panel, _('Add f&older...'), self.onAddFolder)
+        self.add_button = create_button(files_list_buttons_panel, _('&Add'), self.onAdd)
         self.remove_file_button = create_button(files_list_buttons_panel, _('&Remove file'), self.onRemoveFile)
-        self.remove_file_button.Hide()
+        self.remove_file_button.Disable()
 
-        main_buttons_panel = sc.SizedPanel(main_panel)
-        main_buttons_panel.SetSizerType('horizontal')
+        self.main_buttons_panel = sc.SizedPanel(main_panel)
+        self.main_buttons_panel.SetSizerType('horizontal')
+        self.main_buttons_panel.Disable()
 
-        self.output_formats = get_output_format_choices(main_buttons_panel, _('Output &format'))
+        self.output_formats = get_output_format_choices(self.main_buttons_panel, _('O&utput format'))
+        self.output_formats.Disable()
 
-        convert_button = create_button(main_buttons_panel, _('&Convert'), self.onConvert, wx.ID_CONVERT)
-        remove_drm_button = create_button(main_buttons_panel, _('Remove &DRM'), self.onRemoveDRM, wx.ID_CONVERT)
-        options_button = create_button(main_buttons_panel, _('O&ptions'), self.onOptions, id=wx.ID_PREFERENCES)
-        if not application.is_frozen:
-            calibre_environment_button = create_button(main_buttons_panel, '&Launch Calibre environment', self.onCalibreEnvironment)
-        self.tools_button = create_button(main_buttons_panel, _('&Tools'), self.onTools)
-        self.help_button = create_button(main_buttons_panel, _('&Help'), self.onHelp, wx.ID_HELP)
-        exit_button = create_button(main_buttons_panel, _('E&xit'), self.onExit, id=wx.ID_EXIT)
+        self.convert_button = create_button(self.main_buttons_panel, _('&Convert'), self.onConvert, wx.ID_CONVERT)
+        self.convert_button.Disable()
+        self.remove_drm_button = create_button(self.main_buttons_panel, _('Remove &DRM'), self.onRemoveDRM, wx.ID_CONVERT)
+        self.remove_drm_button.Disable()
 
-    def setup_tools_menu(self):
-        self.tools_menu = wx.Menu()
-        find_book_from_url = self.tools_menu.Append(wx.NewId(), _('&Find Kindle file from Amazon URL'))
+    def create_menus(self):
+        file_menu = self.create_file_menu()
+        tools_menu = self.create_tools_menu()
+        help_menu = self.create_help_menu()
+        menu_bar = wx.MenuBar()
+        menu_bar.Append(file_menu, _('&File'))
+        menu_bar.Append(tools_menu, _('&Tools'))
+        menu_bar.Append(help_menu, _('&Help'))
+        self.SetMenuBar(menu_bar)
+        self.add_menu = wx.Menu()
+        add_files = self.add_menu.Append(wx.ID_OPEN, _('Add f&iles...\tCtrl+O'))
+        self.Bind(wx.EVT_MENU, self.onAddFiles, add_files)
+        add_directory = self.add_menu.Append(wx.NewId(), _('Add &directory...\tCtrl+D'))
+        self.Bind(wx.EVT_MENU, self.onAddDirectory, add_directory)
+
+    def create_file_menu(self):
+        file_menu = wx.Menu()
+        add_files = file_menu.Append(wx.ID_OPEN, _('Add f&iles...\tCtrl+O'))
+        self.Bind(wx.EVT_MENU, self.onAddFiles, add_files)
+        add_directory = file_menu.Append(wx.NewId(), _('Add &directory...\tCtrl+D'))
+        self.Bind(wx.EVT_MENU, self.onAddDirectory, add_directory)
+        file_menu.AppendSeparator()
+        options = file_menu.Append(wx.ID_PREFERENCES, _('&Options...\tCtrl+P'))
+        self.Bind(wx.EVT_MENU, self.onOptions, options)
+        exit = file_menu.Append(wx.ID_EXIT, _('&Exit\tAlt+F4'))
+        self.Bind(wx.EVT_MENU, self.onExit, exit)
+        return file_menu
+
+    def create_tools_menu(self):
+        tools_menu = wx.Menu()
+        find_book_from_url = tools_menu.Append(wx.NewId(), _('&Find Kindle file from Amazon URL...'))
         self.Bind(wx.EVT_MENU, self.onFindBookFromUrl, find_book_from_url)
-        browse_kindle_books = self.tools_menu.Append(wx.NewId(), _('&Browse downloaded Kindle books'))
+        browse_kindle_books = tools_menu.Append(wx.NewId(), _('&Browse downloaded Kindle books...'))
         self.Bind(wx.EVT_MENU, self.onBrowseKindleBooks, browse_kindle_books)
+        if not application.is_frozen:
+            calibre_environment = tools_menu.Append(wx.NewId(), _('&Launch Calibre environment'))
+            self.Bind(wx.EVT_MENU, self.onCalibreEnvironment, calibre_environment)
+        return tools_menu
 
-    def setup_help_menu(self):
-        self.help_menu = wx.Menu()
-        help_menu_documentation = self.help_menu.Append(wx.NewId(), _('&Documentation'))
+    def create_help_menu(self):
+        help_menu = wx.Menu()
+        help_menu_documentation = help_menu.Append(wx.NewId(), _('&Documentation'))
         self.Bind(wx.EVT_MENU, self.onDocumentation, help_menu_documentation)
-        help_menu_home_page = self.help_menu.Append(wx.NewId(), _('&Codex home page'))
+        help_menu_home_page = help_menu.Append(wx.NewId(), _('&Codex home page'))
         self.Bind(wx.EVT_MENU, self.onHomePage, help_menu_home_page)
-        help_menu_open_config_directory = self.help_menu.Append(wx.NewId(), _('&Open Codex configuration directory'))
+        help_menu_open_config_directory = help_menu.Append(wx.NewId(), _('&Open Codex configuration directory'))
         self.Bind(wx.EVT_MENU, self.onOpenConfigDirectory, help_menu_open_config_directory)
-        help_menu_about = self.help_menu.Append(wx.ID_ABOUT, _('&About'))
+        help_menu_about = help_menu.Append(wx.ID_ABOUT, _('&About...'))
         self.Bind(wx.EVT_MENU, self.onAbout, help_menu_about)
+        return help_menu
 
     def reset(self):
+        self.remove_file_button.Disable()
+        self.convert_button.Disable()
+        self.remove_drm_button.Disable()
+        self.main_buttons_panel.Disable()
+        self.output_formats.Disable()
         self.files_list.Clear()
         self.files_list.SetFocus()
 
@@ -127,9 +164,12 @@ class MainWindow(sc.SizedFrame):
 
     def onFilesListSelectionChange(self, event):
         if event.IsSelection():
-            self.remove_file_button.Show()
+            self.remove_file_button.Enable()
         else:
             event.Skip()
+
+    def onAdd(self, event):
+        self.PopupMenu(self.add_menu, self.add_button.GetScreenPosition())
 
     def onAddFiles(self, event):
         file_dialog = wx.FileDialog(self, message=_('Please select the file(s) to be added'), defaultDir=application.config['working_directory'], wildcard=_('All supported files|{0}|All files|{1}').format(conversion.input_wildcards, '*.*'), style=wx.FD_OPEN|wx.FD_FILE_MUST_EXIST|wx.FD_MULTIPLE)
@@ -140,9 +180,14 @@ class MainWindow(sc.SizedFrame):
             conversion_pipeline.add_paths(selected_paths, parent=self)
             application.config['working_directory'] = os.path.split(file_dialog.GetPath())[0]
             self.files_list.SetFocus()
+            if self.files_list.GetCount() != 0:
+                self.convert_button.Enable()
+                self.remove_drm_button.Enable()
+                self.main_buttons_panel.Enable()
+                self.output_formats.Enable()
 
-    def onAddFolder(self, event):
-        folder_dialog = wx.DirDialog(self, message=_('Please select the folder to be added'), defaultPath=application.config['working_directory'], style=wx.DD_DEFAULT_STYLE|wx.DD_DIR_MUST_EXIST)
+    def onAddDirectory(self, event):
+        folder_dialog = wx.DirDialog(self, message=_('Please select the directory to be added'), defaultPath=application.config['working_directory'], style=wx.DD_DEFAULT_STYLE|wx.DD_DIR_MUST_EXIST)
         result = folder_dialog.ShowModal()
 
         if result == wx.ID_OK:
@@ -172,12 +217,6 @@ class MainWindow(sc.SizedFrame):
     def onCalibreEnvironment(self, event):
         calibre.setup()
         subprocess.Popen(['cmd.exe'], cwd=calibre.calibre_path, creationflags=subprocess.CREATE_NEW_CONSOLE)
-
-    def onTools(self, event):
-        self.PopupMenu(self.tools_menu, self.help_button.GetScreenPosition())
-
-    def onHelp(self, event):
-        self.PopupMenu(self.help_menu, self.help_button.GetScreenPosition())
 
     def onFindBookFromUrl(self, event):
         find_dialog = dialogs.FindBookFromURLDialog(self)
