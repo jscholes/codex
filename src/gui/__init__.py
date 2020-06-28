@@ -77,7 +77,7 @@ class MainWindow(sc.SizedFrame):
         files_list_buttons_panel.SetSizerType('horizontal')
 
         add_files_button = create_button(files_list_buttons_panel, _('Add f&iles...'), self.onAddFiles)
-        add_folder_button = create_button(files_list_buttons_panel, _('Add f&older...'), self.onAddFolder)
+        add_folder_button = create_button(files_list_buttons_panel, _('Add f&older...'), self.onAddDirectory)
         self.remove_file_button = create_button(files_list_buttons_panel, _('&Remove file'), self.onRemoveFile)
         self.remove_file_button.Hide()
 
@@ -101,6 +101,11 @@ class MainWindow(sc.SizedFrame):
 
     def create_file_menu(self):
         file_menu = wx.Menu()
+        add_files = file_menu.Append(wx.ID_OPEN, _('Add f&iles...\tCtrl+O'))
+        self.Bind(wx.EVT_MENU, self.onAddFiles, add_files)
+        add_directory = file_menu.Append(wx.NewId(), _('Add &directory...\tCtrl+D'))
+        self.Bind(wx.EVT_MENU, self.onAddDirectory, add_directory)
+        file_menu.AppendSeparator()
         options = file_menu.Append(wx.ID_PREFERENCES, _('&Options...\tCtrl+P'))
         self.Bind(wx.EVT_MENU, self.onOptions, options)
         exit = file_menu.Append(wx.ID_EXIT, _('&Exit\tAlt+F4'))
@@ -158,7 +163,7 @@ class MainWindow(sc.SizedFrame):
             application.config['working_directory'] = os.path.split(file_dialog.GetPath())[0]
             self.files_list.SetFocus()
 
-    def onAddFolder(self, event):
+    def onAddDirectory(self, event):
         folder_dialog = wx.DirDialog(self, message=_('Please select the folder to be added'), defaultPath=application.config['working_directory'], style=wx.DD_DEFAULT_STYLE|wx.DD_DIR_MUST_EXIST)
         result = folder_dialog.ShowModal()
 
