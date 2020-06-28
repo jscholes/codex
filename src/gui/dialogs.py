@@ -1,5 +1,5 @@
 # Codex
-# Copyright (C) 2015 James Scholes
+# Copyright (C) 2020 James Scholes
 # This program is free software, licensed under the terms of the GNU General Public License (version 3 or later).
 # See the file LICENSE.txt for more details.
 import os
@@ -158,7 +158,7 @@ class ConversionCompleteDialog(BaseDialog):
             self.converted_files.SetSelection(0)
             self.open_file_button = create_button(self.panel, _('&Open file'), self.onOpenFile)
             self.open_file_button.SetDefault()
-            self.open_folder_button = create_button(self.panel, _('Open fol&der'), self.onOpenFolder)
+            self.open_directory_button = create_button(self.panel, _('Open &directory'), self.onOpenDirectory)
 
         if len(conversion.failed_conversions) > 0:
             failed_conversions_label = wx.StaticText(self.panel, label=_('&Errors'))
@@ -191,7 +191,7 @@ class ConversionCompleteDialog(BaseDialog):
         except wx.PyAssertionError:
             wx.MessageBox(_('No file selected.'), _('Error'), wx.ICON_ERROR, parent=self)
 
-    def onOpenFolder(self, event):
+    def onOpenDirectory(self, event):
         try:
             book = self.converted_files.GetClientData(self.converted_files.GetSelections()[0])
             os.startfile(os.path.dirname(book.output_path))
@@ -264,13 +264,13 @@ class OptionsDialog(BaseDialog):
                 os.makedirs(output_directory)
                 should_save = True
         elif not os.path.isdir(output_directory):
-            wx.MessageBox(_('The output directory you\'ve chosen is not a folder!'), _('Error'), wx.ICON_ERROR, parent=self)
+            wx.MessageBox(_('The output directory you\'ve chosen doesn\'t actually seem to be a directory.'), _('Error'), wx.ICON_ERROR, parent=self)
 
         kindle_content_directory = os.path.expandvars(self.kindle_content_directory.GetValue())
         if not os.path.exists(kindle_content_directory):
             wx.MessageBox(_('The Kindle content directory you\'ve chosen doesn\'t exist.'), _('Warning'), wx.ICON_INFORMATION, parent=self)
         elif not os.path.isdir(kindle_content_directory):
-            wx.MessageBox(_('The Kindle content directory you\'ve chosen is not a folder.'), _('Warning'), wx.ICON_INFORMATION, parent=self)
+            wx.MessageBox(_('The Kindle content directory you\'ve chosen doesn\'t actually seem to be a directory.'), _('Warning'), wx.ICON_INFORMATION, parent=self)
 
         if should_save:
             application.config['output_directory'] = output_directory

@@ -187,7 +187,7 @@ class MainWindow(sc.SizedFrame):
                 self.output_formats.Enable()
 
     def onAddDirectory(self, event):
-        folder_dialog = wx.DirDialog(self, message=_('Please select the folder to be added'), defaultPath=application.config['working_directory'], style=wx.DD_DEFAULT_STYLE|wx.DD_DIR_MUST_EXIST)
+        folder_dialog = wx.DirDialog(self, message=_('Please select the directory to be added'), defaultPath=application.config['working_directory'], style=wx.DD_DEFAULT_STYLE|wx.DD_DIR_MUST_EXIST)
         result = folder_dialog.ShowModal()
 
         if result == wx.ID_OK:
