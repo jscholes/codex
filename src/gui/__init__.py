@@ -53,6 +53,8 @@ class MainWindow(sc.SizedFrame):
                     else:
                         next_item_index = selected_item
                     self.files_list.SetSelection(next_item_index)
+                else:
+                    self.reset()
             except wx.PyAssertionError:
                 pass
 
@@ -85,8 +87,10 @@ class MainWindow(sc.SizedFrame):
 
         self.output_formats = get_output_format_choices(main_buttons_panel, _('O&utput format'))
 
-        convert_button = create_button(main_buttons_panel, _('&Convert'), self.onConvert, wx.ID_CONVERT)
-        remove_drm_button = create_button(main_buttons_panel, _('Remove &DRM'), self.onRemoveDRM, wx.ID_CONVERT)
+        self.convert_button = create_button(main_buttons_panel, _('&Convert'), self.onConvert, wx.ID_CONVERT)
+        self.convert_button.Disable()
+        self.remove_drm_button = create_button(main_buttons_panel, _('Remove &DRM'), self.onRemoveDRM, wx.ID_CONVERT)
+        self.remove_drm_button.Disable()
 
     def create_menus(self):
         file_menu = self.create_file_menu()
@@ -140,6 +144,8 @@ class MainWindow(sc.SizedFrame):
         return help_menu
 
     def reset(self):
+        self.convert_button.Disable()
+        self.remove_drm_button.Disable()
         self.files_list.Clear()
         self.files_list.SetFocus()
 
@@ -169,6 +175,10 @@ class MainWindow(sc.SizedFrame):
             conversion_pipeline.add_paths(selected_paths, parent=self)
             application.config['working_directory'] = os.path.split(file_dialog.GetPath())[0]
             self.files_list.SetFocus()
+            if self.files_list.GetCount() != 0:
+                self.convert_button.Enable()
+                self.remove_drm_button.Enable()
+
 
     def onAddDirectory(self, event):
         folder_dialog = wx.DirDialog(self, message=_('Please select the folder to be added'), defaultPath=application.config['working_directory'], style=wx.DD_DEFAULT_STYLE|wx.DD_DIR_MUST_EXIST)
