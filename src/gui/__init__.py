@@ -80,7 +80,7 @@ class MainWindow(sc.SizedFrame):
 
         self.add_button = create_button(files_list_buttons_panel, _('&Add'), self.onAdd)
         self.remove_file_button = create_button(files_list_buttons_panel, _('&Remove file'), self.onRemoveFile)
-        self.remove_file_button.Hide()
+        self.remove_file_button.Disable()
 
         self.main_buttons_panel = sc.SizedPanel(main_panel)
         self.main_buttons_panel.SetSizerType('horizontal')
@@ -146,6 +146,7 @@ class MainWindow(sc.SizedFrame):
         return help_menu
 
     def reset(self):
+        self.remove_file_button.Disable()
         self.convert_button.Disable()
         self.remove_drm_button.Disable()
         self.main_buttons_panel.Disable()
@@ -163,7 +164,7 @@ class MainWindow(sc.SizedFrame):
 
     def onFilesListSelectionChange(self, event):
         if event.IsSelection():
-            self.remove_file_button.Show()
+            self.remove_file_button.Enable()
         else:
             event.Skip()
 
