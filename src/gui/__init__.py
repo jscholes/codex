@@ -43,7 +43,6 @@ class MainWindow(sc.SizedFrame):
         webbrowser.open(readme_path)
 
     def add_conversion(self, path):
-        self.files_list.Append(path)
         if self.conversions_list.GetItemCount() > 0 and self.conversions_list.GetItemData(0) == EMPTY_LIST_MESSAGE:
             self.conversions_list.DeleteAllItems()
         self.conversions_list.Append([path])
@@ -55,17 +54,15 @@ class MainWindow(sc.SizedFrame):
         if selected_item != -1:
             book = conversion.conversion_queue[selected_item]
             conversion.conversion_queue.remove(book)
-            self.files_list.Delete(selected_item)
             self.conversions_list.DeleteItem(selected_item)
             try:
-                if self.files_list.GetCount() != 0:
-                    if selected_item == self.files_list.GetCount():
+                if self.conversions_list.GetItemCount() != 0:
+                    if selected_item == self.conversions_list.GetItemCount():
                         next_item_index = selected_item - 1
                     elif selected_item == 0:
                         next_item_index = 0
                     else:
                         next_item_index = selected_item
-                    self.files_list.SetSelection(next_item_index)
                     self.conversions_list.Focus(next_item_index)
                     self.conversions_list.Select(next_item_index)
                 else:
@@ -173,7 +170,6 @@ class MainWindow(sc.SizedFrame):
         self.remove_drm_button.Disable()
         self.main_buttons_panel.Disable()
         self.output_formats.Disable()
-        self.files_list.Clear()
         self.reset_conversions_list()
         self.conversions_list.SetFocus()
 
@@ -212,7 +208,7 @@ class MainWindow(sc.SizedFrame):
             conversion_pipeline.add_paths(selected_paths, parent=self)
             application.config['working_directory'] = os.path.split(file_dialog.GetPath())[0]
             self.conversions_list.SetFocus()
-            if self.files_list.GetCount() != 0:
+            if self.conversions_list.GetItemCount() != 0:
                 self.convert_button.Enable()
                 self.remove_drm_button.Enable()
                 self.main_buttons_panel.Enable()
