@@ -48,7 +48,7 @@ class MainWindow(sc.SizedFrame):
             self.conversions_list.DeleteAllItems()
         self.conversions_list.Append([path])
         self.conversions_list.Focus(0)
-        self.conversions_list.Select(0)
+        # self.conversions_list.Select(0)
 
     def remove_file(self, selected_item):
         if selected_item != -1:
@@ -87,17 +87,14 @@ class MainWindow(sc.SizedFrame):
         self.files_list = wx.ListBox(main_panel, style=wx.LB_NEEDED_SB)
         self.files_list.SetSizerProps(expand=True, proportion=1)
         self.files_list.Bind(wx.EVT_CHAR, self.onFilesListKeyPressed)
-        self.files_list.Bind(wx.EVT_LISTBOX, self.onFilesListSelectionChange)
 
         conversions_list_label = wx.StaticText(main_panel, label=_('&Conversions'))
         self.conversions_list = wx.ListCtrl(main_panel, style=wx.LC_REPORT)
         self.conversions_list.SetSizerProps(expand=True, proportion=1)
         self.conversions_list.Bind(wx.EVT_CHAR, self.onFilesListKeyPressed)
+        self.conversions_list.Bind(wx.EVT_LIST_ITEM_SELECTED, self.onFilesListSelectionChange)
         self.conversions_list.AppendColumn('Name')
         self.conversions_list.Append(['No files added for conversion.  Use the "Add" button or paste from your clipboard.'])
-        self.conversions_list.Focus(0)
-        self.conversions_list.Select(0)
-        self.conversions_list.SetItemData(0, EMPTY_LIST_MESSAGE)
 
         files_list_buttons_panel = sc.SizedPanel(main_panel)
         files_list_buttons_panel.SetSizerType('horizontal')
@@ -117,6 +114,10 @@ class MainWindow(sc.SizedFrame):
         self.convert_button.Disable()
         self.remove_drm_button = create_button(self.main_buttons_panel, _('Remove &DRM'), self.onRemoveDRM, wx.ID_CONVERT)
         self.remove_drm_button.Disable()
+
+        self.conversions_list.SetItemData(0, EMPTY_LIST_MESSAGE)
+        self.conversions_list.Focus(0)
+        self.conversions_list.Select(0)
 
     def create_menus(self):
         file_menu = self.create_file_menu()
@@ -187,7 +188,7 @@ class MainWindow(sc.SizedFrame):
             event.Skip()
 
     def onFilesListSelectionChange(self, event):
-        if event.IsSelection():
+        if event.GetIndex() >= 0 and self.conversions_list.GetItemData(0) != EMPTY_LIST_MESSAGE:
             self.remove_file_button.Enable()
         else:
             event.Skip()
