@@ -87,6 +87,7 @@ class MainWindow(sc.SizedFrame):
         self.conversions_list.Bind(wx.EVT_CHAR, self.onFilesListKeyPressed)
         self.conversions_list.Bind(wx.EVT_LIST_ITEM_SELECTED, self.onFilesListSelectionChange)
         self.conversions_list.AppendColumn('Name')
+        self.conversions_list.AppendColumn('Output format')
 
         files_list_buttons_panel = sc.SizedPanel(main_panel)
         files_list_buttons_panel.SetSizerType('horizontal')
