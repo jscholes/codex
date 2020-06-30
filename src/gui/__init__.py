@@ -95,7 +95,6 @@ class MainWindow(sc.SizedFrame):
         self.conversions_list.Bind(wx.EVT_CHAR, self.onFilesListKeyPressed)
         self.conversions_list.Bind(wx.EVT_LIST_ITEM_SELECTED, self.onFilesListSelectionChange)
         self.conversions_list.AppendColumn('Name')
-        self.conversions_list.Append(['No files added for conversion.  Use the "Add" button or paste from your clipboard.'])
 
         files_list_buttons_panel = sc.SizedPanel(main_panel)
         files_list_buttons_panel.SetSizerType('horizontal')
@@ -115,10 +114,7 @@ class MainWindow(sc.SizedFrame):
         self.convert_button.Disable()
         self.remove_drm_button = create_button(self.main_buttons_panel, _('Remove &DRM'), self.onRemoveDRM, wx.ID_CONVERT)
         self.remove_drm_button.Disable()
-
-        self.conversions_list.SetItemData(0, EMPTY_LIST_MESSAGE)
-        self.conversions_list.Focus(0)
-        self.conversions_list.Select(0)
+        self.reset_conversions_list()
 
     def create_menus(self):
         file_menu = self.create_file_menu()
@@ -178,7 +174,16 @@ class MainWindow(sc.SizedFrame):
         self.main_buttons_panel.Disable()
         self.output_formats.Disable()
         self.files_list.Clear()
+        self.reset_conversions_list()
         self.conversions_list.SetFocus()
+
+    def reset_conversions_list(self):
+        if self.conversions_list.GetItemCount() > 0:
+            self.conversions_list.DeleteAllItems()
+        self.conversions_list.Append(['No files added for conversion.  Use the "Add" button or paste from your clipboard.'])
+        self.conversions_list.SetItemData(0, EMPTY_LIST_MESSAGE)
+        self.conversions_list.Focus(0)
+        self.conversions_list.Select(0)
 
     def onFilesListKeyPressed(self, event):
         if event.GetKeyCode() == wx.WXK_DELETE and self.files_list.GetCount() != 0:
