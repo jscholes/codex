@@ -45,7 +45,7 @@ class MainWindow(sc.SizedFrame):
     def add_conversion(self, path):
         if self.conversions_list.GetItemCount() > 0 and self.conversions_list.GetItemData(0) == EMPTY_LIST_MESSAGE:
             self.conversions_list.DeleteAllItems()
-        self.conversions_list.Append([path])
+        self.conversions_list.Append([path, self.output_formats.GetStringSelection()])
         new_index = self.conversions_list.GetItemCount() - 1
         self.conversions_list.Focus(new_index)
         self.conversions_list.Select(new_index)
@@ -102,6 +102,7 @@ class MainWindow(sc.SizedFrame):
 
         self.output_formats = get_output_format_choices(self.main_buttons_panel, _('O&utput format'))
         self.output_formats.Disable()
+        self.output_formats.Bind(wx.EVT_COMBOBOX, self.onOutputFormatSelected)
 
         self.convert_button = create_button(self.main_buttons_panel, _('&Convert'), self.onConvert, wx.ID_CONVERT)
         self.convert_button.Disable()
@@ -228,6 +229,11 @@ class MainWindow(sc.SizedFrame):
         conversion.remove_drm_only = True
         conversion_pipeline.start(parent=self)
         self.reset()
+
+    def onOutputFormatSelected(self, event):
+        for index in range(self.conversions_list.GetItemCount()):
+            self.conversions_list.SetItem(index, 1, self.output_formats.GetStringSelection())
+        event.Skip()
 
     def onConvert(self, event):
         conversion.output_format = self.output_formats.GetClientData(self.output_formats.GetSelection())
