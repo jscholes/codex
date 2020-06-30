@@ -21,7 +21,7 @@ from . import dialogs
 from .utils import create_button, create_labelled_field, get_output_format_choices
 
 
-EMPTY_LIST = -1
+EMPTY_LIST_MESSAGE = -1
 
 
 class MainWindow(sc.SizedFrame):
@@ -42,11 +42,20 @@ class MainWindow(sc.SizedFrame):
 
         webbrowser.open(readme_path)
 
+    def add_conversion(self, path):
+        self.files_list.Append(path)
+        if self.conversions_list.GetItemCount() > 0 and self.conversions_list.GetItemData(0) == EMPTY_LIST_MESSAGE:
+            self.conversions_list.DeleteAllItems()
+        self.conversions_list.Append([path])
+        self.conversions_list.Focus(0)
+        self.conversions_list.Select(0)
+
     def remove_file(self, selected_item):
         if selected_item != -1:
             book = conversion.conversion_queue[selected_item]
             conversion.conversion_queue.remove(book)
             self.files_list.Delete(selected_item)
+            self.conversions_list.DeleteItem(selected_item)
             try:
                 if self.files_list.GetCount() != 0:
                     if selected_item == self.files_list.GetCount():
@@ -56,6 +65,8 @@ class MainWindow(sc.SizedFrame):
                     else:
                         next_item_index = selected_item
                     self.files_list.SetSelection(next_item_index)
+                    self.conversions_list.Focus(next_item_index)
+                    self.conversions_list.Select(next_item_index)
                 else:
                     self.reset()
             except wx.PyAssertionError:
@@ -84,7 +95,7 @@ class MainWindow(sc.SizedFrame):
         self.conversions_list.Append(['No files added for conversion.  Use the "Add" button or paste from your clipboard.'])
         self.conversions_list.Focus(0)
         self.conversions_list.Select(0)
-        self.conversions_list.SetItemData(0, EMPTY_LIST)
+        self.conversions_list.SetItemData(0, EMPTY_LIST_MESSAGE)
 
         files_list_buttons_panel = sc.SizedPanel(main_panel)
         files_list_buttons_panel.SetSizerType('horizontal')
