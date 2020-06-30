@@ -47,8 +47,9 @@ class MainWindow(sc.SizedFrame):
         if self.conversions_list.GetItemCount() > 0 and self.conversions_list.GetItemData(0) == EMPTY_LIST_MESSAGE:
             self.conversions_list.DeleteAllItems()
         self.conversions_list.Append([path])
-        self.conversions_list.Focus(0)
-        # self.conversions_list.Select(0)
+        new_index = self.conversions_list.GetItemCount() - 1
+        self.conversions_list.Focus(new_index)
+        self.conversions_list.Select(new_index)
 
     def remove_file(self, selected_item):
         if selected_item != -1:
