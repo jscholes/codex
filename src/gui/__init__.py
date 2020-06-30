@@ -92,6 +92,7 @@ class MainWindow(sc.SizedFrame):
         conversions_list_label = wx.StaticText(main_panel, label=_('&Conversions'))
         self.conversions_list = wx.ListCtrl(main_panel, style=wx.LC_REPORT)
         self.conversions_list.SetSizerProps(expand=True, proportion=1)
+        self.conversions_list.Bind(wx.EVT_CHAR, self.onFilesListKeyPressed)
         self.conversions_list.AppendColumn('Name')
         self.conversions_list.Append(['No files added for conversion.  Use the "Add" button or paste from your clipboard.'])
         self.conversions_list.Focus(0)
