@@ -174,7 +174,7 @@ class MainWindow(sc.SizedFrame):
         self.main_buttons_panel.Disable()
         self.output_formats.Disable()
         self.files_list.Clear()
-        self.files_list.SetFocus()
+        self.conversions_list.SetFocus()
 
     def onFilesListKeyPressed(self, event):
         if event.GetKeyCode() == wx.WXK_DELETE and self.files_list.GetCount() != 0:
@@ -201,7 +201,7 @@ class MainWindow(sc.SizedFrame):
             selected_paths = file_dialog.GetPaths()
             conversion_pipeline.add_paths(selected_paths, parent=self)
             application.config['working_directory'] = os.path.split(file_dialog.GetPath())[0]
-            self.files_list.SetFocus()
+            self.conversions_list.SetFocus()
             if self.files_list.GetCount() != 0:
                 self.convert_button.Enable()
                 self.remove_drm_button.Enable()
@@ -215,12 +215,12 @@ class MainWindow(sc.SizedFrame):
         if result == wx.ID_OK:
             conversion_pipeline.add_paths(paths.walk_directory_tree(folder_dialog.GetPath()), parent=self, from_folder=True)
             application.config['working_directory'] = os.path.split(folder_dialog.GetPath())[0]
-            self.files_list.SetFocus()
+            self.conversions_list.SetFocus()
 
     def onRemoveFile(self, event):
         if self.files_list.GetCount() != 0:
             self.remove_file(self.files_list.GetSelection())
-            self.files_list.SetFocus()
+            self.conversions_list.SetFocus()
 
     def onRemoveDRM(self, event):
         conversion.remove_drm_only = True
