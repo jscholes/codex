@@ -81,11 +81,6 @@ class MainWindow(sc.SizedFrame):
         main_panel = self.GetContentsPane()
         main_panel.SetSizerType('vertical')
 
-        files_list_label = wx.StaticText(main_panel, label=_('Files'))
-        self.files_list = wx.ListBox(main_panel, style=wx.LB_NEEDED_SB)
-        self.files_list.SetSizerProps(expand=True, proportion=1)
-        self.files_list.Bind(wx.EVT_CHAR, self.onFilesListKeyPressed)
-
         conversions_list_label = wx.StaticText(main_panel, label=_('&Conversions'))
         self.conversions_list = wx.ListCtrl(main_panel, style=wx.LC_REPORT|wx.LC_SINGLE_SEL)
         self.conversions_list.SetSizerProps(expand=True, proportion=1)
