@@ -21,6 +21,9 @@ from . import dialogs
 from .utils import create_button, create_labelled_field, get_output_format_choices
 
 
+EMPTY_LIST = -1
+
+
 class MainWindow(sc.SizedFrame):
     def __init__(self, *args, **kwargs):
         super(MainWindow, self).__init__(None, -1, _(application.title), size=(800, 600), style=wx.DEFAULT_FRAME_STYLE, *args, **kwargs)
@@ -74,6 +77,14 @@ class MainWindow(sc.SizedFrame):
         self.files_list.SetSizerProps(expand=True, proportion=1)
         self.files_list.Bind(wx.EVT_CHAR, self.onFilesListKeyPressed)
         self.files_list.Bind(wx.EVT_LISTBOX, self.onFilesListSelectionChange)
+
+        conversions_list_label = wx.StaticText(main_panel, label=_('&Conversions'))
+        self.conversions_list = wx.ListCtrl(main_panel, style=wx.LC_REPORT)
+        self.conversions_list.AppendColumn('Name')
+        self.conversions_list.Append(['No files added for conversion.  Use the "Add" button or paste from your clipboard.'])
+        self.conversions_list.Focus(0)
+        self.conversions_list.Select(0)
+        self.conversions_list.SetItemData(0, EMPTY_LIST)
 
         files_list_buttons_panel = sc.SizedPanel(main_panel)
         files_list_buttons_panel.SetSizerType('horizontal')
