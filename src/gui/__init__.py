@@ -90,7 +90,7 @@ class MainWindow(sc.SizedFrame):
         self.files_list.Bind(wx.EVT_CHAR, self.onFilesListKeyPressed)
 
         conversions_list_label = wx.StaticText(main_panel, label=_('&Conversions'))
-        self.conversions_list = wx.ListCtrl(main_panel, style=wx.LC_REPORT)
+        self.conversions_list = wx.ListCtrl(main_panel, style=wx.LC_REPORT|wx.LC_SINGLE_SEL)
         self.conversions_list.SetSizerProps(expand=True, proportion=1)
         self.conversions_list.Bind(wx.EVT_CHAR, self.onFilesListKeyPressed)
         self.conversions_list.Bind(wx.EVT_LIST_ITEM_SELECTED, self.onFilesListSelectionChange)
@@ -186,8 +186,9 @@ class MainWindow(sc.SizedFrame):
         self.conversions_list.Select(0)
 
     def onFilesListKeyPressed(self, event):
-        if event.GetKeyCode() == wx.WXK_DELETE and self.files_list.GetCount() != 0:
-            self.remove_file(self.files_list.GetSelection())
+        if event.GetKeyCode() == wx.WXK_DELETE:
+            if self.conversions_list.GetItemCount() != 0 and self.conversions_list.GetItemData(0) != EMPTY_LIST_MESSAGE:
+                self.remove_file(self.conversions_list.GetFirstSelected())
         elif event.GetKeyCode() == wx.WXK_CONTROL_V:
             self.paste_files_from_clipboard()
         else:
@@ -227,8 +228,8 @@ class MainWindow(sc.SizedFrame):
             self.conversions_list.SetFocus()
 
     def onRemoveFile(self, event):
-        if self.files_list.GetCount() != 0:
-            self.remove_file(self.files_list.GetSelection())
+        if self.conversions_list.GetItemCount() != 0 and self.conversions_list.GetItemData(0) != EMPTY_LIST_MESSAGE:
+            self.remove_file(self.conversions_list.GetFirstSelected())
             self.conversions_list.SetFocus()
 
     def onRemoveDRM(self, event):
