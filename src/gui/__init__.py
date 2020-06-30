@@ -44,7 +44,7 @@ class MainWindow(sc.SizedFrame):
 
     def remove_file(self, selected_item):
         if selected_item != -1:
-            book = self.files_list.GetClientData(selected_item)
+            book = conversion.conversion_queue[selected_item]
             conversion.conversion_queue.remove(book)
             self.files_list.Delete(selected_item)
             try:

@@ -14,7 +14,7 @@ def add_paths(path_list, parent=None, from_folder=False):
         try:
             book = conversion.add_path(path)
             if parent is not None:
-                application.main_window.files_list.Append(book.input_path, book)
+                application.main_window.files_list.Append(book.input_path)
         except conversion.FileAlreadyAddedError:
             if not from_folder:
                 wx.MessageBox(_('File {file} has already been added.').format(file=path), _('Error'), wx.ICON_ERROR, parent=parent)
