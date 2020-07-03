@@ -9,12 +9,12 @@ import conversion
 
 from . import dialogs
 
-def add_paths(path_list, parent=None, from_folder=False):
+def add_paths(path_list, format, parent=None, from_folder=False):
     for path in path_list:
         try:
             book = conversion.add_path(path)
             if parent is not None:
-                application.main_window.add_conversion(book.input_path)
+                application.main_window.add_conversion(book.input_path, format)
         except conversion.FileAlreadyAddedError:
             if not from_folder:
                 wx.MessageBox(_('File {file} has already been added.').format(file=path), _('Error'), wx.ICON_ERROR, parent=parent)

@@ -42,10 +42,10 @@ class MainWindow(sc.SizedFrame):
 
         webbrowser.open(readme_path)
 
-    def add_conversion(self, path):
+    def add_conversion(self, path, format):
         if self.conversions_list.GetItemCount() > 0 and self.conversions_list.GetItemData(0) == EMPTY_LIST_MESSAGE:
             self.conversions_list.DeleteAllItems()
-        self.conversions_list.Append([path, self.output_formats.GetStringSelection()])
+        self.conversions_list.Append([path, conversion.OutputFormat[format].value])
         new_index = self.conversions_list.GetItemCount() - 1
         self.conversions_list.Focus(new_index)
         self.conversions_list.Select(new_index)
@@ -56,7 +56,6 @@ class MainWindow(sc.SizedFrame):
             self.remove_drm_button.Enable()
             self.main_buttons_panel.Enable()
             self.output_formats.Enable()
-
 
     def remove_file(self, selected_item):
         if selected_item != -1:
@@ -81,7 +80,7 @@ class MainWindow(sc.SizedFrame):
     def paste_files_from_clipboard(self):
         try:
             clipboard_paths = clipboard.get_files_from_clipboard()
-            conversion_pipeline.add_paths(clipboard_paths, parent=self)
+            conversion_pipeline.add_paths(clipboard_paths, self.output_formats.GetClientData(self.output_formats.GetSelection()), parent=self)
         except clipboard.NoFilesOnClipboardError:
             pass
 
@@ -110,7 +109,6 @@ class MainWindow(sc.SizedFrame):
 
         self.output_formats = get_output_format_choices(self.main_buttons_panel, _('O&utput format'))
         self.output_formats.Disable()
-        self.output_formats.Bind(wx.EVT_COMBOBOX, self.onOutputFormatSelected)
 
         self.convert_button = create_button(self.main_buttons_panel, _('&Convert'), self.onConvert, wx.ID_CONVERT)
         self.convert_button.Disable()
@@ -210,7 +208,7 @@ class MainWindow(sc.SizedFrame):
 
         if result == wx.ID_OK:
             selected_paths = file_dialog.GetPaths()
-            conversion_pipeline.add_paths(selected_paths, parent=self)
+            conversion_pipeline.add_paths(selected_paths, self.output_formats.GetClientData(self.output_formats.GetSelection()), parent=self)
             application.config['working_directory'] = os.path.split(file_dialog.GetPath())[0]
             self.conversions_list.SetFocus()
 
@@ -219,7 +217,7 @@ class MainWindow(sc.SizedFrame):
         result = folder_dialog.ShowModal()
 
         if result == wx.ID_OK:
-            conversion_pipeline.add_paths(paths.walk_directory_tree(folder_dialog.GetPath()), parent=self, from_folder=True)
+            conversion_pipeline.add_paths(paths.walk_directory_tree(folder_dialog.GetPath()), self.output_formats.GetClientData(self.output_formats.GetSelection()), parent=self, from_folder=True)
             application.config['working_directory'] = os.path.split(folder_dialog.GetPath())[0]
             self.conversions_list.SetFocus()
 
@@ -232,11 +230,6 @@ class MainWindow(sc.SizedFrame):
         conversion.remove_drm_only = True
         conversion_pipeline.start(parent=self)
         self.reset()
-
-    def onOutputFormatSelected(self, event):
-        for index in range(self.conversions_list.GetItemCount()):
-            self.conversions_list.SetItem(index, 1, self.output_formats.GetStringSelection())
-        event.Skip()
 
     def onConvert(self, event):
         conversion.output_format = self.output_formats.GetClientData(self.output_formats.GetSelection())
@@ -255,7 +248,7 @@ class MainWindow(sc.SizedFrame):
         find_dialog = dialogs.FindBookFromURLDialog(self)
         result = find_dialog.ShowModal()
         if result == wx.ID_OK and find_dialog.ebook_path:
-            conversion_pipeline.add_paths([find_dialog.ebook_path], parent=self)
+            conversion_pipeline.add_paths([find_dialog.ebook_path], self.output_formats.GetClientData(self.output_formats.GetSelection()), parent=self)
 
     def onBrowseKindleBooks(self, event):
         if not os.path.exists(application.config['kindle_content_directory']):
@@ -272,8 +265,7 @@ class MainWindow(sc.SizedFrame):
         books_dialog = dialogs.BrowseKindleBooksDialog(self, kindle_files)
         result = books_dialog.ShowModal()
         if result == wx.ID_OK and books_dialog.ebook_paths:
-            conversion_pipeline.add_paths(books_dialog.ebook_paths, parent=self)
-
+            conversion_pipeline.add_paths(books_dialog.ebook_paths, self.output_formats.GetClientData(self.output_formats.GetSelection()), parent=self)
 
     def onDocumentation(self, event):
         self.open_readme()
@@ -302,12 +294,12 @@ def setup():
             wx.MessageBox(_('The specified file or directory does not exist.'), _('Error'), wx.ICON_ERROR, parent=None)
             return
         if os.path.isdir(args.path):
-            conversion_pipeline.add_paths(paths.walk_directory_tree(args.path), from_folder=True)
+            conversion_pipeline.add_paths(paths.walk_directory_tree(args.path), conversion.OutputFormat[args.format].name, from_folder=True)
             if len(conversion.conversion_queue) == 0:
                 wx.MessageBox(_('No supported files were found in the specified directory.'), _('Error'), wx.ICON_ERROR, parent=None)
                 return
         else:
-            conversion_pipeline.add_paths([args.path])
+            conversion_pipeline.add_paths([args.path], conversion.OutputFormat[args.format].name)
 
         if len(conversion.conversion_queue) == 0:
             return
