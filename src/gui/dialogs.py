@@ -19,7 +19,6 @@ import kindle_metadata
 import log
 from signals import conversion_started, conversion_error, conversion_complete
 
-import gui.conversion_pipeline
 from .utils import create_button, create_labelled_field, get_output_format_choices
 
 class BaseDialog(sc.SizedDialog):
@@ -299,6 +298,7 @@ class FindBookFromURLDialog(BaseDialog):
     _title = _('Find Kindle eBook File from Amazon URL')
 
     def setup_layout(self):
+        self.ebook_path = ''
         dialog_label = wx.StaticText(self.panel)
         dialog_label.SetLabel(_('To easily locate the eBook file for a Kindle book you\'ve just purchased and downloaded to this computer, please enter the URL of the book\'s product page on Amazon.'))
         self.url = create_labelled_field(self.panel, _('&Amazon URL'))
@@ -315,8 +315,7 @@ class FindBookFromURLDialog(BaseDialog):
 
     def onOK(self, event):
         try:
-            ebook_path = kindle_finder.find_kindle_file_from_amazon_url(application.config['kindle_content_directory'], self.url.GetValue())
-            gui.conversion_pipeline.add_paths([ebook_path], parent=self)
+            self.ebook_path = kindle_finder.find_kindle_file_from_amazon_url(application.config['kindle_content_directory'], self.url.GetValue())
             self.EndModal(wx.ID_OK)
         except kindle_finder.InvalidAmazonURLError as e:
             wx.MessageBox(_('{0} doesn\'t seem to be a valid Amazon product URL.').format(e.url), _('Error'), wx.ICON_ERROR, parent=self)
@@ -328,6 +327,7 @@ class BrowseKindleBooksDialog(BaseDialog):
     _title = _('Downloaded Kindle Books')
 
     def __init__(self, parent, files, *args, **kwargs):
+        self.ebook_paths = []
         self.dismissed = False
         self.item_has_focus = False
         self.files = files
@@ -386,8 +386,7 @@ class BrowseKindleBooksDialog(BaseDialog):
     def onOK(self, event):
         self.dismissed = True
         selected_items = self.books_list.GetSelections()
-        selected_paths = [self.books_list.GetClientData(index) for index in selected_items]
-        gui.conversion_pipeline.add_paths(selected_paths, parent=self.GetParent())
+        self.ebook_paths = [self.books_list.GetClientData(index) for index in selected_items]
         self.EndModal(wx.ID_OK)
 
     def onCancel(self, event):

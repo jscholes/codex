@@ -253,7 +253,9 @@ class MainWindow(sc.SizedFrame):
 
     def onFindBookFromUrl(self, event):
         find_dialog = dialogs.FindBookFromURLDialog(self)
-        find_dialog.ShowModal()
+        result = find_dialog.ShowModal()
+        if result == wx.ID_OK and find_dialog.ebook_path:
+            conversion_pipeline.add_paths([find_dialog.ebook_path], parent=self)
 
     def onBrowseKindleBooks(self, event):
         if not os.path.exists(application.config['kindle_content_directory']):
@@ -268,7 +270,10 @@ class MainWindow(sc.SizedFrame):
             return
 
         books_dialog = dialogs.BrowseKindleBooksDialog(self, kindle_files)
-        books_dialog.ShowModal()
+        result = books_dialog.ShowModal()
+        if result == wx.ID_OK and books_dialog.ebook_paths:
+            conversion_pipeline.add_paths(books_dialog.ebook_paths, parent=self)
+
 
     def onDocumentation(self, event):
         self.open_readme()
