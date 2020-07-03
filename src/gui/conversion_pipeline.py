@@ -27,6 +27,7 @@ def add_paths(path_list, parent=None, from_folder=False):
             if not from_folder:
                 wx.MessageBox(_('The specified file does not exist.'), _('Error'), wx.ICON_ERROR, parent=parent)
             continue
+    application.main_window.refresh(    )
 
 def start(parent=None):
     if len(conversion.conversion_queue) == 0:

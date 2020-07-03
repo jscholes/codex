@@ -50,6 +50,14 @@ class MainWindow(sc.SizedFrame):
         self.conversions_list.Focus(new_index)
         self.conversions_list.Select(new_index)
 
+    def refresh(self):
+        if self.conversions_list.GetItemCount() != 0:
+            self.convert_button.Enable()
+            self.remove_drm_button.Enable()
+            self.main_buttons_panel.Enable()
+            self.output_formats.Enable()
+
+
     def remove_file(self, selected_item):
         if selected_item != -1:
             book = conversion.conversion_queue[selected_item]
@@ -205,11 +213,6 @@ class MainWindow(sc.SizedFrame):
             conversion_pipeline.add_paths(selected_paths, parent=self)
             application.config['working_directory'] = os.path.split(file_dialog.GetPath())[0]
             self.conversions_list.SetFocus()
-            if self.conversions_list.GetItemCount() != 0:
-                self.convert_button.Enable()
-                self.remove_drm_button.Enable()
-                self.main_buttons_panel.Enable()
-                self.output_formats.Enable()
 
     def onAddDirectory(self, event):
         folder_dialog = wx.DirDialog(self, message=_('Please select the directory to be added'), defaultPath=application.config['working_directory'], style=wx.DD_DEFAULT_STYLE|wx.DD_DIR_MUST_EXIST)
