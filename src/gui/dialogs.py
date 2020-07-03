@@ -36,11 +36,9 @@ class BaseDialog(sc.SizedDialog):
 
 
 class ConversionProgressDialog(BaseDialog):
+    _title = _('Converting...')
+
     def __init__(self, parent, *args, **kwargs):
-        if conversion.remove_drm_only:
-            self._title = _('Removing DRM...')
-        else:
-            self._title = _('Converting...')
         self.counter = 1
         self.current_file = conversion.conversion_queue[0]['book'].input_path
         self.files_to_be_converted = len(conversion.conversion_queue)
@@ -73,11 +71,7 @@ class ConversionProgressDialog(BaseDialog):
 
     def update_progress(self):
         self.progress_bar.SetValue(self.calculate_progress())
-        if conversion.remove_drm_only:
-            verb = _('Removing DRM from')
-        else:
-            verb = _('Converting')
-        self.progress_text.SetLabel(_('{0} file {1} of {2}').format(verb, self.counter, self.files_to_be_converted))
+        self.progress_text.SetLabel(_('Converting file {0} of {1}').format(self.counter, self.files_to_be_converted))
         self.current_file_text.SetLabel(self.current_file)
 
     def calculate_progress(self):
@@ -119,15 +113,7 @@ class ConversionProgressDialog(BaseDialog):
 
 
 class ConversionCompleteDialog(BaseDialog):
-    def __init__(self, parent, *args, **kwargs):
-        if conversion.remove_drm_only:
-            if len(conversion.converted_files) == 0:
-                self._title = _('DRM not removed')
-            else:
-                self._title = _('DRM removed')
-        else:
-            self._title = _('Conversion Complete')
-        super(ConversionCompleteDialog, self).__init__(parent=parent, *args, **kwargs)
+    _title = _('Conversion Results')
 
     def copy_selected_books_to_clipboard(self):
         selected_items = self.converted_files.GetSelections()
@@ -142,10 +128,7 @@ class ConversionCompleteDialog(BaseDialog):
 
     def setup_layout(self):
         if len(conversion.converted_files) > 0:
-            if conversion.remove_drm_only:
-                converted_files_label = wx.StaticText(self.panel, label=_('&Processed files'))
-            else:
-                converted_files_label = wx.StaticText(self.panel, label=_('&Converted files'))
+            converted_files_label = wx.StaticText(self.panel, label=_('&Converted files'))
             self.converted_files = wx.ListBox(self.panel, style=wx.LB_NEEDED_SB|wx.LB_EXTENDED)
             self.converted_files.SetSizerProps(expand=True, proportion=1)
             self.converted_files.Bind(wx.EVT_CHAR, self.onConvertedFilesKeyPressed)
