@@ -232,7 +232,6 @@ class MainWindow(sc.SizedFrame):
         self.reset()
 
     def onConvert(self, event):
-        conversion.output_format = self.output_formats.GetClientData(self.output_formats.GetSelection())
         conversion_pipeline.start(parent=self)
         self.reset()
 

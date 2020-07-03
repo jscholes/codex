@@ -12,7 +12,7 @@ from . import dialogs
 def add_paths(path_list, format, parent=None, from_folder=False):
     for path in path_list:
         try:
-            book = conversion.add_path(path)
+            book = conversion.add_path(path, format)
             if parent is not None:
                 application.main_window.add_conversion(book.input_path, format)
         except conversion.FileAlreadyAddedError:

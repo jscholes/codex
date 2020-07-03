@@ -51,7 +51,6 @@ class OutputFormat(Enum):
 conversion_queue = []
 converted_files = []
 failed_conversions = []
-output_format = 'epub'
 remove_drm_only = False
 no_drm = False
 stop_conversion = threading.Event()
@@ -60,8 +59,8 @@ skip_current_file = threading.Event()
 def filetype_not_supported(path):
     return os.path.splitext(path)[1].lstrip('.').lower() not in input_formats
 
-def add_path(path):
-    if path in [book.input_path for book in conversion_queue]:
+def add_path(path, output_format):
+    if path in [conversion['book'].input_path for conversion in conversion_queue]:
         raise FileAlreadyAddedError
     elif filetype_not_supported(path):
         raise FiletypeNotSupportedError
@@ -69,7 +68,7 @@ def add_path(path):
         raise FileNotFoundError
 
     book = models.Book(input_path=path)
-    conversion_queue.append(book)
+    conversion_queue.append({'book': book, 'output_format': output_format})
     return book
 
 
@@ -100,7 +99,9 @@ class ConversionWorker(threading.Thread):
         wx.CallAfter(signal.send, self, **kwargs)
 
     def run(self, *args, **kwargs):
-        for index, book in enumerate(conversion_queue):
+        for index, conversion in enumerate(conversion_queue):
+            book = conversion['book']
+            output_format = conversion['output_format']
             if stop_conversion.is_set():
                 break
 

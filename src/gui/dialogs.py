@@ -42,7 +42,7 @@ class ConversionProgressDialog(BaseDialog):
         else:
             self._title = _('Converting...')
         self.counter = 1
-        self.current_file = conversion.conversion_queue[0].input_path
+        self.current_file = conversion.conversion_queue[0]['book'].input_path
         self.files_to_be_converted = len(conversion.conversion_queue)
         self.is_cancelled = False
         conversion.stop_conversion.clear()
