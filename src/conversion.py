@@ -25,14 +25,13 @@ class ConversionCancelled(Exception):
 class SkipCurrentFile(Exception):
     pass
 
-class FileAlreadyAddedError(Exception):
-    pass
-
-class FiletypeNotSupportedError(Exception):
-    pass
-
 class FileNotFoundError(Exception):
     pass
+
+class PathNotAddedError(Exception):
+    def __init__(self, code, **kwargs):
+        self.code = code
+        self.kwargs = kwargs
 
 E_FILE_ALREADY_ADDED = 0
 E_FILETYPE_NOT_SUPPORTED = 1
@@ -66,11 +65,11 @@ def filetype_not_supported(path):
 
 def add_path(path, output_format):
     if path in [conversion['book'].input_path for conversion in conversion_queue]:
-        raise FileAlreadyAddedError
+        raise PathNotAddedError(E_FILE_ALREADY_ADDED, file=path)
     elif filetype_not_supported(path):
-        raise FiletypeNotSupportedError
+        raise PathNotAddedError(E_FILETYPE_NOT_SUPPORTED)
     elif not os.path.exists(path):
-        raise FileNotFoundError
+        raise PathNotAddedError(E_FILE_NOT_FOUND)
 
     book = models.Book(input_path=path)
     conversion_queue.append({'book': book, 'output_format': output_format})

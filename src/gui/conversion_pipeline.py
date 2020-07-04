@@ -30,17 +30,9 @@ def add_paths(path_list, format=None, parent=None, from_folder=False):
             book = conversion.add_path(path, format)
             if parent is not None:
                 application.main_window.add_conversion(book.input_path, format)
-        except conversion.FileAlreadyAddedError:
+        except conversion.PathNotAddedError as e:
             if not from_folder:
-                wx.MessageBox(error_messages[conversion.E_FILE_ALREADY_ADDED].format(file=path), _('Error'), wx.ICON_ERROR, parent=parent)
-            continue
-        except conversion.FiletypeNotSupportedError:
-            if not from_folder:
-                wx.MessageBox(error_messages[conversion.E_FILETYPE_NOT_SUPPORTED], _('Error'), wx.ICON_ERROR, parent=parent)
-            continue
-        except conversion.FileNotFoundError:
-            if not from_folder:
-                wx.MessageBox(error_messages[conversion.E_FILE_NOT_FOUND], _('Error'), wx.ICON_ERROR, parent=parent)
+                wx.MessageBox(error_messages[e.code].format(**e.kwargs), _('Error'), wx.ICON_ERROR, parent=parent)
             continue
     application.main_window.refresh(    )
 
