@@ -35,6 +35,28 @@ class BaseDialog(sc.SizedDialog):
 
 
 
+class ConversionOptionsDialog(BaseDialog):
+    _title = _('Conversion Options')
+
+    def setup_layout(self):
+        self.output_format = get_output_format_choices(self.panel, _('&Output format'))
+
+        ok_button = wx.Button(self.panel, wx.ID_OK)
+        ok_button.SetDefault()
+        cancel_button = wx.Button(self.panel, wx.ID_CANCEL)
+        ok_button.Bind(wx.EVT_BUTTON, self.onOK)
+        button_sizer = wx.StdDialogButtonSizer()
+        button_sizer.AddButton(ok_button)
+        button_sizer.AddButton(cancel_button)
+        self.SetButtonSizer(button_sizer)
+        self.SetAffirmativeId(wx.ID_OK)
+        self.SetEscapeId(wx.ID_CANCEL)
+
+    def onOK(self, event):
+        self.EndModal(wx.ID_OK)
+
+
+
 class ConversionProgressDialog(BaseDialog):
     _title = _('Converting...')
 
