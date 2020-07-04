@@ -29,9 +29,8 @@ class FileNotFoundError(Exception):
     pass
 
 class PathNotAddedError(Exception):
-    def __init__(self, code, **kwargs):
+    def __init__(self, code):
         self.code = code
-        self.kwargs = kwargs
 
 E_FILE_ALREADY_ADDED = 0
 E_FILETYPE_NOT_SUPPORTED = 1
@@ -65,7 +64,7 @@ def filetype_not_supported(path):
 
 def add_path(path, output_format):
     if path in [conversion['book'].input_path for conversion in conversion_queue]:
-        raise PathNotAddedError(E_FILE_ALREADY_ADDED, file=path)
+        raise PathNotAddedError(E_FILE_ALREADY_ADDED)
     elif filetype_not_supported(path):
         raise PathNotAddedError(E_FILETYPE_NOT_SUPPORTED)
     elif not os.path.exists(path):

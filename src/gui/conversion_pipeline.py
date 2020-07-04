@@ -11,9 +11,9 @@ from . import dialogs
 
 
 error_messages = {
-    conversion.E_FILE_ALREADY_ADDED: _('File {file} has already been added.'),
-    conversion.E_FILETYPE_NOT_SUPPORTED: _('Sorry, this filetype is not supported.'),
-    conversion.E_FILE_NOT_FOUND: _('The specified file does not exist.')
+    conversion.E_FILE_ALREADY_ADDED: _('File already added'),
+    conversion.E_FILETYPE_NOT_SUPPORTED: _('Filetype not supported'),
+    conversion.E_FILE_NOT_FOUND: _('File does not exist')
 }
 
 
@@ -32,7 +32,7 @@ def add_paths(path_list, format=None, parent=None, from_folder=False):
             book = conversion.add_path(path, format)
             valid_paths.append(book.input_path)
         except conversion.PathNotAddedError as e:
-            invalid_paths.update({path: error_messages[e.code].format(**e.kwargs)})
+            invalid_paths.update({path: error_messages[e.code]})
             continue
     if len(invalid_paths) > 0:
         dialogs.InvalidPathsDialog(parent, invalid_paths).ShowModal()
