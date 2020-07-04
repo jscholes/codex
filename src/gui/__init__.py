@@ -54,7 +54,6 @@ class MainWindow(sc.SizedFrame):
         if self.conversions_list.GetItemCount() != 0:
             self.convert_button.Enable()
             self.main_buttons_panel.Enable()
-            self.output_formats.Enable()
 
     def remove_file(self, selected_item):
         if selected_item != -1:
@@ -105,9 +104,6 @@ class MainWindow(sc.SizedFrame):
         self.main_buttons_panel = sc.SizedPanel(main_panel)
         self.main_buttons_panel.SetSizerType('horizontal')
         self.main_buttons_panel.Disable()
-
-        self.output_formats = get_output_format_choices(self.main_buttons_panel, _('O&utput format'))
-        self.output_formats.Disable()
 
         self.convert_button = create_button(self.main_buttons_panel, _('&Convert'), self.onConvert, wx.ID_CONVERT)
         self.convert_button.Disable()
@@ -168,7 +164,6 @@ class MainWindow(sc.SizedFrame):
         self.remove_file_button.Disable()
         self.convert_button.Disable()
         self.main_buttons_panel.Disable()
-        self.output_formats.Disable()
         self.reset_conversions_list()
         self.conversions_list.SetFocus()
 

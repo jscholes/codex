@@ -287,7 +287,6 @@ class OptionsDialog(BaseDialog):
             application.config['extra_ebook_convert_options'] = self.extra_ebook_convert_options.GetValue()
             debug = self.debug.IsChecked()
             application.config['debug'] = debug
-            application.main_window.output_formats.SetStringSelection(self.default_output_format.GetStringSelection())
 
             validation_result = application.config.validate(application.config_validator)
             if validation_result == True:
