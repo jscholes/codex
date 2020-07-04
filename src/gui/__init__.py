@@ -53,7 +53,6 @@ class MainWindow(sc.SizedFrame):
     def refresh(self):
         if self.conversions_list.GetItemCount() != 0:
             self.convert_button.Enable()
-            self.remove_drm_button.Enable()
             self.main_buttons_panel.Enable()
             self.output_formats.Enable()
 
@@ -112,8 +111,6 @@ class MainWindow(sc.SizedFrame):
 
         self.convert_button = create_button(self.main_buttons_panel, _('&Convert'), self.onConvert, wx.ID_CONVERT)
         self.convert_button.Disable()
-        self.remove_drm_button = create_button(self.main_buttons_panel, _('Remove &DRM'), self.onRemoveDRM, wx.ID_CONVERT)
-        self.remove_drm_button.Disable()
         self.reset_conversions_list()
 
     def create_menus(self):
@@ -170,7 +167,6 @@ class MainWindow(sc.SizedFrame):
     def reset(self):
         self.remove_file_button.Disable()
         self.convert_button.Disable()
-        self.remove_drm_button.Disable()
         self.main_buttons_panel.Disable()
         self.output_formats.Disable()
         self.reset_conversions_list()
@@ -225,11 +221,6 @@ class MainWindow(sc.SizedFrame):
         if self.conversions_list.GetItemCount() != 0 and self.conversions_list.GetItemData(0) != EMPTY_LIST_MESSAGE:
             self.remove_file(self.conversions_list.GetFirstSelected())
             self.conversions_list.SetFocus()
-
-    def onRemoveDRM(self, event):
-        conversion.remove_drm_only = True
-        conversion_pipeline.start(parent=self)
-        self.reset()
 
     def onConvert(self, event):
         conversion_pipeline.start(parent=self)
