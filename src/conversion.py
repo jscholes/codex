@@ -39,6 +39,7 @@ untitled_formats = ['txt', 'txtz']
 input_wildcards = ';'.join(['*.{0}'.format(format) for format in input_formats])
 
 class OutputFormat(Enum):
+    copy = _('Remove DRM only')
     azw3 = 'Kindle'
     epub = 'ePub'
     docx = 'Microsoft Word 2007'
@@ -99,9 +100,12 @@ class ConversionWorker(threading.Thread):
         wx.CallAfter(signal.send, self, **kwargs)
 
     def run(self, *args, **kwargs):
+        global remove_drm_only
         for index, conversion in enumerate(conversion_queue):
             book = conversion['book']
             output_format = conversion['output_format']
+            if output_format == OutputFormat['copy'].name:
+                remove_drm_only = True
             if stop_conversion.is_set():
                 break
 
@@ -148,6 +152,8 @@ class ConversionWorker(threading.Thread):
             except calibre.ExecutableNotFoundError:
                 self.send_signal(conversion_error, error_msg=_('The required utilities for eBook conversion could not be found.  Please reinstall the application.'))
                 break
+            finally:
+                remove_drm_only = False
 
         self.cleanup()
 
