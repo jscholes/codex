@@ -79,7 +79,7 @@ class MainWindow(sc.SizedFrame):
     def paste_files_from_clipboard(self):
         try:
             clipboard_paths = clipboard.get_files_from_clipboard()
-            conversion_pipeline.add_paths(clipboard_paths, self.output_formats.GetClientData(self.output_formats.GetSelection()), parent=self)
+            conversion_pipeline.add_paths(clipboard_paths, parent=self)
         except clipboard.NoFilesOnClipboardError:
             pass
 
@@ -204,7 +204,7 @@ class MainWindow(sc.SizedFrame):
 
         if result == wx.ID_OK:
             selected_paths = file_dialog.GetPaths()
-            conversion_pipeline.add_paths(selected_paths, self.output_formats.GetClientData(self.output_formats.GetSelection()), parent=self)
+            conversion_pipeline.add_paths(selected_paths, parent=self)
             application.config['working_directory'] = os.path.split(file_dialog.GetPath())[0]
             self.conversions_list.SetFocus()
 
@@ -213,7 +213,7 @@ class MainWindow(sc.SizedFrame):
         result = folder_dialog.ShowModal()
 
         if result == wx.ID_OK:
-            conversion_pipeline.add_paths(paths.walk_directory_tree(folder_dialog.GetPath()), self.output_formats.GetClientData(self.output_formats.GetSelection()), parent=self, from_folder=True)
+            conversion_pipeline.add_paths(paths.walk_directory_tree(folder_dialog.GetPath()), parent=self, from_folder=True)
             application.config['working_directory'] = os.path.split(folder_dialog.GetPath())[0]
             self.conversions_list.SetFocus()
 
@@ -238,7 +238,7 @@ class MainWindow(sc.SizedFrame):
         find_dialog = dialogs.FindBookFromURLDialog(self)
         result = find_dialog.ShowModal()
         if result == wx.ID_OK and find_dialog.ebook_path:
-            conversion_pipeline.add_paths([find_dialog.ebook_path], self.output_formats.GetClientData(self.output_formats.GetSelection()), parent=self)
+            conversion_pipeline.add_paths([find_dialog.ebook_path], parent=self)
 
     def onBrowseKindleBooks(self, event):
         if not os.path.exists(application.config['kindle_content_directory']):
@@ -255,7 +255,7 @@ class MainWindow(sc.SizedFrame):
         books_dialog = dialogs.BrowseKindleBooksDialog(self, kindle_files)
         result = books_dialog.ShowModal()
         if result == wx.ID_OK and books_dialog.ebook_paths:
-            conversion_pipeline.add_paths(books_dialog.ebook_paths, self.output_formats.GetClientData(self.output_formats.GetSelection()), parent=self)
+            conversion_pipeline.add_paths(books_dialog.ebook_paths, parent=self)
 
     def onDocumentation(self, event):
         self.open_readme()

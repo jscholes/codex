@@ -9,13 +9,14 @@ import conversion
 
 from . import dialogs
 
-def add_paths(path_list, format, parent=None, from_folder=False):
-    options_dialog = dialogs.ConversionOptionsDialog(parent)
-    result = options_dialog.ShowModal()
-    if result == wx.ID_OK:
-        format = options_dialog.output_format.GetClientData(options_dialog.output_format.GetSelection())
-    else:
-        return
+def add_paths(path_list, format=None, parent=None, from_folder=False):
+    if format is None:
+        options_dialog = dialogs.ConversionOptionsDialog(parent)
+        result = options_dialog.ShowModal()
+        if result == wx.ID_OK:
+            format = options_dialog.output_format.GetClientData(options_dialog.output_format.GetSelection())
+        else:
+            return
     for path in path_list:
         try:
             book = conversion.add_path(path, format)
