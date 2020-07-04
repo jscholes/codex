@@ -35,6 +35,40 @@ class BaseDialog(sc.SizedDialog):
 
 
 
+class InvalidPathsDialog(BaseDialog):
+    _title = _('Errors')
+
+    def __init__(self, parent, invalid_paths, *args, **kwargs):
+        self.invalid_paths = invalid_paths
+        super().__init__(parent=parent, *args, **kwargs)
+
+    def setup_layout(self):
+        errors_list_label = wx.StaticText(self.panel, label=_('Some files could not be added for conversion:'))
+        errors_list = wx.ListCtrl(self.panel, style=wx.LC_REPORT|wx.LC_SINGLE_SEL)
+        errors_list.Bind(wx.EVT_LIST_ITEM_ACTIVATED, self.onItemActivation)
+        errors_list.SetSizerProps(expand=True, proportion=1)
+        errors_list.AppendColumn('Path')
+        errors_list.AppendColumn('Reason')
+
+        for path, error_message in self.invalid_paths.items():
+            errors_list.Append([path, error_message])
+        if errors_list.GetItemCount() > 0:
+            errors_list.Focus(0)
+            errors_list.Select(0)
+
+        continue_button = wx.Button(self.panel, wx.ID_OK, _('&Continue'))
+        continue_button.SetDefault()
+        button_sizer = wx.StdDialogButtonSizer()
+        button_sizer.AddButton(continue_button)
+        self.SetButtonSizer(button_sizer)
+        self.SetAffirmativeId(wx.ID_OK)
+        self.SetEscapeId(wx.ID_OK)
+
+    def onItemActivation(self, event):
+        self.EndModal(wx.ID_OK)
+
+
+
 class ConversionOptionsDialog(BaseDialog):
     _title = _('Conversion Options')
 

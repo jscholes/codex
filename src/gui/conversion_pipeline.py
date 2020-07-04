@@ -35,7 +35,7 @@ def add_paths(path_list, format=None, parent=None, from_folder=False):
             invalid_paths.update({path: error_messages[e.code].format(**e.kwargs)})
             continue
     if len(invalid_paths) > 0:
-        wx.MessageBox('Some files could not be added.', _('Error'), wx.ICON_ERROR, parent=parent)
+        dialogs.InvalidPathsDialog(parent, invalid_paths).ShowModal()
     if parent is not None and len(valid_paths) > 0:
         application.main_window.add_conversions(valid_paths, format)
         application.main_window.refresh(    )
