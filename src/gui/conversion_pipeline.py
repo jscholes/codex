@@ -18,6 +18,7 @@ error_messages = {
 
 
 def add_paths(path_list, format=None, parent=None, from_folder=False):
+    valid_paths = []
     if format is None:
         options_dialog = dialogs.ConversionOptionsDialog(parent)
         result = options_dialog.ShowModal()
@@ -28,13 +29,14 @@ def add_paths(path_list, format=None, parent=None, from_folder=False):
     for path in path_list:
         try:
             book = conversion.add_path(path, format)
-            if parent is not None:
-                application.main_window.add_conversion(book.input_path, format)
+            valid_paths.append(book.input_path)
         except conversion.PathNotAddedError as e:
             if not from_folder:
                 wx.MessageBox(error_messages[e.code].format(**e.kwargs), _('Error'), wx.ICON_ERROR, parent=parent)
             continue
-    application.main_window.refresh(    )
+    if parent is not None and len(valid_paths) > 0:
+        application.main_window.add_conversions(valid_paths, format)
+        application.main_window.refresh(    )
 
 def start(parent=None):
     if len(conversion.conversion_queue) == 0:

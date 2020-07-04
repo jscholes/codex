@@ -42,10 +42,11 @@ class MainWindow(sc.SizedFrame):
 
         webbrowser.open(readme_path)
 
-    def add_conversion(self, path, format):
+    def add_conversions(self, paths, format):
         if self.conversions_list.GetItemCount() > 0 and self.conversions_list.GetItemData(0) == EMPTY_LIST_MESSAGE:
             self.conversions_list.DeleteAllItems()
-        self.conversions_list.Append([path, conversion.OutputFormat[format].value])
+        for path in paths:
+            self.conversions_list.Append([path, conversion.OutputFormat[format].value])
         new_index = self.conversions_list.GetItemCount() - 1
         self.conversions_list.Focus(new_index)
         self.conversions_list.Select(new_index)
